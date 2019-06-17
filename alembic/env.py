@@ -31,7 +31,7 @@ config.set_main_option(
 
 from helpers.database import Base
 
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
