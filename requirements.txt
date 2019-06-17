@@ -1,0 +1,13 @@
+Flask
+flask_json
+livereload==2.5.1
+flake8
+tox
+pytest
+flask_graphql
+graphene
+flask_sqlalchemy
+graphene-sqlalchemy
+alembic
+mysql-connector-python
+Flask-Testing==0.7.1
