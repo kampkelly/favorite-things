@@ -4,10 +4,10 @@ from sqlalchemy import Column, String, Integer
 
 sys.path.append(os.getcwd())
 
-from helpers.database import Base # noqa
+from helpers.database import Base, Utility # noqa
 
 
-class Category(Base):
+class Category(Base, Utility):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True)
-    category = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
