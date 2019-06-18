@@ -11,7 +11,7 @@ class UserValidations:
         signup_validation
     """
 
-    def signup_validation(func):
+    def input_validation(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             errors = []
@@ -24,12 +24,11 @@ class UserValidations:
                 errors.append('Provided email address is not valid')
             if len(kwargs['password']) < 8:
                 errors.append('Password length is too short, it should be up to 8 characters')
-            if len(kwargs['name']) < 3:
+            if 'name' in kwargs and len(kwargs['name']) < 3:
                 errors.append('Name is too short')
             if len(errors):
                 raise GraphQLError(
-                ('The following errors occured: {}').format(
-                    str(errors).strip('[]'))
+                    ('The following errors occured: {}').format(str(errors).strip('[]'))
                 )
             return func(*args, **kwargs)
         return wrapper
