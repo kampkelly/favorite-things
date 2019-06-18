@@ -2,22 +2,22 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
-from app_config import bcrypt
 from .models import Category as CategoryModel
 
 
 class Category(SQLAlchemyObjectType):
     class Meta:
         model = CategoryModel
-        only_fields = ("name", "email")
+        only_fields = ("id", "name", "created_date")
 
 
 class Query(graphene.ObjectType):
-    get_categories = graphene.Field(Category)
+    get_categories = graphene.List(Category)
 
-    def resolve_get_categories(self, info, email):
+    def resolve_get_categories(self, info, **kwargs):
         query = Category.get_query(info)
-        return query
+        categories = query.order_by(CategoryModel.id).all()
+        return categories
 
 
 class CreateCategory(graphene.Mutation):
