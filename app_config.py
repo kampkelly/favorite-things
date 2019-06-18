@@ -1,12 +1,9 @@
 import os
-import sys
 from flask import Flask
 from flask_json import FlaskJSON, json_response
-from livereload import Server
+from flask_bcrypt import Bcrypt
 
-sys.path.append(os.getcwd())
-
-from config import config # noqa
+from config import config
 
 
 def create_app(config_name):
@@ -22,9 +19,5 @@ def create_app(config_name):
 
 
 app = create_app(os.getenv('APP_SETTINGS'))
-print(os.getenv('APP_SETTINGS'))
-server = Server(app.wsgi_app)
 
-
-if __name__ == '__main__':
-    server.serve(port=7000, host='0.0.0.0')
+bcrypt = Bcrypt(app)
