@@ -1,13 +1,9 @@
-import os
-import sys
 from sqlalchemy import Column, String, Integer
 
-sys.path.append(os.getcwd())
-
-from helpers.database import Base # noqa
+from helpers.database import Base, Utility
 
 
-class User(Base):
+class User(Base, Utility):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     email = Column(String(100), nullable=False)

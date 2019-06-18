@@ -10,4 +10,4 @@ COPY api /src/api
 
 EXPOSE 7000
 
-CMD ["python", "api/app.py"]
+CMD ["python", "server.py"]

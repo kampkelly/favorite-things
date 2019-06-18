@@ -30,6 +30,7 @@ config.set_main_option(
 )
 
 from helpers.database import Base
+from api.users.models import User
 
 target_metadata = Base.metadata
 

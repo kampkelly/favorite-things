@@ -12,8 +12,7 @@ build:
 
 start:
 	@ echo "Starting favorite_things..."
-	@ docker-compose -f ${DEV_COMPOSE_FILE} rm
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up --force-recreate -d
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
 	@ echo "services started"
 
 stop:
