@@ -1,6 +1,4 @@
 import graphene
-import jwt
-import os
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
@@ -32,7 +30,7 @@ class SignupUser(graphene.Mutation):
     user = graphene.Field(User)
     token = graphene.String()
 
-    @UserValidations.signup_validation
+    @UserValidations.input_validation
     def mutate(self, info, **kwargs):
         kwargs['password'] = bcrypt.generate_password_hash(kwargs['password']).decode('utf-8')
         query = User.get_query(info)
@@ -45,5 +43,28 @@ class SignupUser(graphene.Mutation):
         return SignupUser(user=user, token=token)
 
 
+class SigninUser(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+    user = graphene.Field(User)
+    token = graphene.String()
+
+    @UserValidations.input_validation
+    def mutate(self, info, **kwargs):
+        query = User.get_query(info)
+        user = query.filter(UserModel.email == kwargs['email']).first()
+        if user:
+            check_password = bcrypt.check_password_hash(user.password, kwargs['password'])
+            if check_password:
+                token = Authenticator.generate_token(user.name, user.email)
+                return SignupUser(user=user, token=token)
+            else:
+                raise GraphQLError("Email or password is incorrect")
+        else:
+            raise GraphQLError("Email or password is incorrect")
+
+
 class Mutation(graphene.ObjectType):
     signup_user = SignupUser.Field()
+    signin_user = SigninUser.Field()
