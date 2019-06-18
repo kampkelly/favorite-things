@@ -32,3 +32,7 @@ flask_shell:
 
 mysql_shell:
 	@ docker-compose -f ${DEV_COMPOSE_FILE} exec database bash
+
+test:
+	@ echo 'starting tests...'
+	@ docker-compose -f ${DEV_COMPOSE_FILE} exec app ${DEV_FOLDER}/start_tests.sh "$(test)"
