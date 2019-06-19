@@ -68,5 +68,27 @@ class CreateCategory(graphene.Mutation):
         return CreateCategory(category=category)
 
 
+class DeleteCategory(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+    category = graphene.Field(Category)
+
+    @Authenticator.authenticate
+    def mutate(self, info, **kwargs):
+        query = Category.get_query(info)
+        query_favorite_things = FavoriteThing.get_query(info)
+        category = query.filter_by(id=kwargs['id']).first()
+        if category:
+            has_favorite_things = query_favorite_things.filter(
+                FavoriteThingModel.category_id == category.id).all()
+            if has_favorite_things:
+                raise GraphQLError("Cannot delete category because it has favorite things")
+            category.delete()
+        else:
+            raise GraphQLError("Category does not exist")
+        return DeleteCategory(category=category)
+
+
 class Mutation(graphene.ObjectType):
     create_category = CreateCategory.Field()
+    delete_category = DeleteCategory.Field()
