@@ -4,10 +4,10 @@ from sqlalchemy import Column, String, Integer
 
 sys.path.append(os.getcwd())
 
-from helpers.database import Base # noqa
+from helpers.database import Base, Utility # noqa
 
 
-class Audit(Base):
+class Audit(Base, Utility):
     __tablename__ = "audit"
     id = Column(Integer, primary_key=True)
     log = Column(String(255), nullable=False)

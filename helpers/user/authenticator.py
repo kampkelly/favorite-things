@@ -18,7 +18,7 @@ class Authenticator:
             if 'Access-Token' in args[1].context.headers:
                 token = args[1].context.headers['Access-Token']
                 decoded = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=['HS256'])
-                kwargs['user_id'] = decoded['id']
+                args[1].context.user = decoded
             else:
                 raise GraphQLError('Access Token is empty')
             return func(*args, **kwargs)
