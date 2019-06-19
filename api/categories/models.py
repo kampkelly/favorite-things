@@ -12,5 +12,4 @@ class Category(Base, Utility):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    created_date = Column(TIMESTAMP(), nullable=False)
     created_date = Column(TIMESTAMP(timezone=True), server_default=func.now(timezone="WAT"), nullable=False)
