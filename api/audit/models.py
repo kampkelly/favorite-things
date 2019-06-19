@@ -1,6 +1,7 @@
 import os
 import sys
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 
 sys.path.append(os.getcwd())
 
@@ -11,4 +12,5 @@ class Audit(Base, Utility):
     __tablename__ = "audit"
     id = Column(Integer, primary_key=True)
     log = Column(String(255), nullable=False)
-    user_id = Column(Integer(), nullable=False)
+    user_id = Column(Integer(), ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    user = relationship("User")

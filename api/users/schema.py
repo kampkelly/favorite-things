@@ -11,15 +11,18 @@ from helpers.user.authenticator import Authenticator
 class User(SQLAlchemyObjectType):
     class Meta:
         model = UserModel
-        only_fields = ("name", "email")
+        only_fields = ("name", "email", "audit_logs")
 
 
 class Query(graphene.ObjectType):
-    get_user = graphene.Field(User, email=graphene.String(required=True))
+    get_user_details = graphene.Field(User)
 
-    def resolve_get_user(self, info, email):
+    @Authenticator.authenticate
+    def resolve_get_user_details(self, info, **kwargs):
+        user_id = info.context.user['id']
         query = User.get_query(info)
-        return query
+        user = query.filter_by(id=user_id).first()
+        return user
 
 
 class SignupUser(graphene.Mutation):
