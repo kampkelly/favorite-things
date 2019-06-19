@@ -8,7 +8,7 @@ email_pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
 class UserValidations:
     """ Validate user entries for signup and signin
     :methods
-        signup_validation
+        input_validation
     """
 
     def input_validation(func):

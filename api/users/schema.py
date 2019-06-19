@@ -39,7 +39,7 @@ class SignupUser(graphene.Mutation):
             raise GraphQLError("An account with this email already exists")
         user = UserModel(**kwargs)
         user.save()
-        token = Authenticator.generate_token(kwargs['name'], kwargs['email'])
+        token = Authenticator.generate_token(user.id, kwargs['name'], kwargs['email'])
         return SignupUser(user=user, token=token)
 
 
@@ -57,7 +57,7 @@ class SigninUser(graphene.Mutation):
         if user:
             check_password = bcrypt.check_password_hash(user.password, kwargs['password'])
             if check_password:
-                token = Authenticator.generate_token(user.name, user.email)
+                token = Authenticator.generate_token(user.id, user.name, user.email)
                 return SignupUser(user=user, token=token)
             else:
                 raise GraphQLError("Email or password is incorrect")
