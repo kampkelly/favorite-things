@@ -12,15 +12,18 @@ from helpers.database import update_entity_fields
 class FavoriteThing(SQLAlchemyObjectType):
     class Meta:
         model = FavoriteThingModel
-        only_fields = ("id", "title", "description", "object_metadata", "ranking", "category_id", "user_id", "created_date")
 
 
 class Query(graphene.ObjectType):
-    get_favorite_things = graphene.Field(FavoriteThing)
+    get_favorite_things = graphene.List(FavoriteThing)
 
+    @Authenticator.authenticate
     def resolve_get_favorite_things(self, info, **kwargs):
         query = FavoriteThing.get_query(info)
-        return query
+        favorite_things = query.filter(
+            FavoriteThingModel.user_id == kwargs['user_id']).order_by(
+                FavoriteThingModel.ranking).all()
+        return favorite_things
 
 
 class AddFavoriteThing(graphene.Mutation):

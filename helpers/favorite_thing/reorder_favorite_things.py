@@ -14,16 +14,16 @@ class ReorderFavoriteThings:
             return 1
 
         if ('id' in kwargs and last_favorite_thing_in_category
-            and kwargs['ranking'] > last_favorite_thing_in_category.ranking):
+            and kwargs['ranking'] > last_favorite_thing_in_category.ranking): # noqa
             return last_favorite_thing_in_category.ranking
 
         if ('id' not in kwargs and last_favorite_thing_in_category
-            and kwargs['ranking'] > last_favorite_thing_in_category.ranking):
+            and kwargs['ranking'] > last_favorite_thing_in_category.ranking): # noqa
             return last_favorite_thing_in_category.ranking + 1
         return kwargs['ranking']
 
     def reorder_favorite_things_on_create(query, **kwargs):
-        favorite_things_in_category = query.filter(
+        query.filter(
                 FavoriteThingModel.category_id == kwargs['category_id'],
                 FavoriteThingModel.user_id == kwargs['user_id'],
                 FavoriteThingModel.ranking >= kwargs['ranking']
@@ -38,7 +38,7 @@ class ReorderFavoriteThings:
                 FavoriteThingModel.user_id == kwargs['user_id']).first()
 
             if favorite_thing.ranking < kwargs['ranking']:
-                favorite_things_in_category = query.filter(
+                query.filter(
                     FavoriteThingModel.category_id == kwargs['category_id'],
                     FavoriteThingModel.user_id == kwargs['user_id'],
                     FavoriteThingModel.ranking > favorite_thing.ranking,
@@ -48,7 +48,7 @@ class ReorderFavoriteThings:
                         {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
                         synchronize_session=False)
             elif favorite_thing.ranking > kwargs['ranking']:
-                favorite_things_in_category = query.filter(
+                query.filter(
                     FavoriteThingModel.category_id == kwargs['category_id'],
                     FavoriteThingModel.user_id == kwargs['user_id'],
                     FavoriteThingModel.ranking < favorite_thing.ranking,
@@ -56,7 +56,7 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.id != kwargs['id']
                     ).update(
                         {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
-                        synchronize_session=False)    
+                        synchronize_session=False)
 
     def check_existing_favorite_thing(query, **kwargs):
         existing_favorite_thing = query.filter(

@@ -1,4 +1,3 @@
-import re
 import datetime
 from functools import wraps
 from graphql import GraphQLError
