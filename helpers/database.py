@@ -22,6 +22,11 @@ class Utility(object):
         db_session.add(self)
         db_session.commit()
 
+    def delete(self):
+        """Function for deleting objects"""
+        db_session.delete(self)
+        db_session.commit()
+
 
 def update_entity_fields(entity, **kwargs):
     """

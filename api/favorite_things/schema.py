@@ -74,13 +74,37 @@ class UpdateFavoriteThing(graphene.Mutation):
 
         kwargs['ranking'] = ReorderFavoriteThings.check_last_favorite_thing_in_category(query, **kwargs)
 
-        ReorderFavoriteThings.reorder_favorite_things_on_update(query, **kwargs)
+        ReorderFavoriteThings.reorder_favorite_things_on_update(
+            query, favorite_thing, **kwargs)
 
         update_entity_fields(favorite_thing, **kwargs)
         favorite_thing.save()
         return UpdateFavoriteThing(favorite_thing=favorite_thing)
 
 
+class DeleteFavoriteThing(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+    favorite_thing = graphene.Field(FavoriteThing)
+
+    @Authenticator.authenticate
+    def mutate(self, info, **kwargs):
+        query = FavoriteThing.get_query(info)
+        favorite_thing = query.filter(
+            FavoriteThingModel.id == kwargs['id'],
+            FavoriteThingModel.user_id == kwargs['user_id']).first()
+        if not favorite_thing:
+            raise GraphQLError('Favorite thing does not exist')
+        kwargs['category_id'] = favorite_thing.category_id
+
+        ReorderFavoriteThings.reorder_favorite_things_on_delete(
+            query, favorite_thing, **kwargs)
+
+        favorite_thing.delete()
+        return DeleteFavoriteThing(favorite_thing=favorite_thing)
+
+
 class Mutation(graphene.ObjectType):
     add_favorite_thing = AddFavoriteThing.Field()
     update_favorite_thing = UpdateFavoriteThing.Field()
+    delete_favorite_thing = DeleteFavoriteThing.Field()
