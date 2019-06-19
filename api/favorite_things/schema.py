@@ -7,6 +7,7 @@ from helpers.favorite_thing.validations import FavoriteThingValidations
 from helpers.favorite_thing.reorder_favorite_things import ReorderFavoriteThings
 from helpers.user.authenticator import Authenticator
 from helpers.database import update_entity_fields
+from helpers.audit.add_audit import AddAudit
 
 
 class FavoriteThing(SQLAlchemyObjectType):
@@ -19,9 +20,10 @@ class Query(graphene.ObjectType):
 
     @Authenticator.authenticate
     def resolve_get_favorite_things(self, info, **kwargs):
+        user = info.context.user
         query = FavoriteThing.get_query(info)
         favorite_things = query.filter(
-            FavoriteThingModel.user_id == kwargs['user_id']).order_by(
+            FavoriteThingModel.user_id == user['id']).order_by(
                 FavoriteThingModel.ranking).all()
         return favorite_things
 
@@ -38,16 +40,22 @@ class AddFavoriteThing(graphene.Mutation):
     @FavoriteThingValidations.input_validation
     @Authenticator.authenticate
     def mutate(self, info, **kwargs):
+        user = info.context.user
         query = FavoriteThing.get_query(info)
-        ReorderFavoriteThings.check_existing_favorite_thing(query, **kwargs)
+        ReorderFavoriteThings.check_existing_favorite_thing(query, user['id'], **kwargs)
 
         kwargs['ranking'] = ReorderFavoriteThings.check_last_favorite_thing_in_category(
-            query, **kwargs)
+            query, info, user['id'], **kwargs)
 
-        ReorderFavoriteThings.reorder_favorite_things_on_create(query, **kwargs)
+        ReorderFavoriteThings.reorder_favorite_things_on_create(query, user['id'], **kwargs)
 
+        kwargs['user_id'] = user['id']
         favorite_thing = FavoriteThingModel(**kwargs)
         favorite_thing.save()
+        user = info.context.user
+        AddAudit.add_audit(
+            f"You added a new favorite thing: '{favorite_thing.title}'\
+            with ranking of '{favorite_thing.ranking}'", user)
         return AddFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -64,21 +72,25 @@ class UpdateFavoriteThing(graphene.Mutation):
     @FavoriteThingValidations.input_validation
     @Authenticator.authenticate
     def mutate(self, info, **kwargs):
+        user = info.context.user
         query = FavoriteThing.get_query(info)
         favorite_thing = query.filter(
             FavoriteThingModel.id == kwargs['id'],
-            FavoriteThingModel.user_id == kwargs['user_id']).first()
+            FavoriteThingModel.user_id == user['id']).first()
         if not favorite_thing:
             raise GraphQLError('Favorite thing does not exist')
         kwargs['category_id'] = favorite_thing.category_id
 
-        kwargs['ranking'] = ReorderFavoriteThings.check_last_favorite_thing_in_category(query, **kwargs)
+        kwargs['ranking'] = ReorderFavoriteThings.check_last_favorite_thing_in_category(
+            query, info, user['id'], **kwargs)
 
         ReorderFavoriteThings.reorder_favorite_things_on_update(
-            query, favorite_thing, **kwargs)
+            query, user['id'], favorite_thing, **kwargs)
 
         update_entity_fields(favorite_thing, **kwargs)
         favorite_thing.save()
+        AddAudit.add_audit(
+            f"You updated the favorite thing: '{favorite_thing.title}'", user)
         return UpdateFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -89,18 +101,21 @@ class DeleteFavoriteThing(graphene.Mutation):
 
     @Authenticator.authenticate
     def mutate(self, info, **kwargs):
+        user = info.context.user
         query = FavoriteThing.get_query(info)
         favorite_thing = query.filter(
             FavoriteThingModel.id == kwargs['id'],
-            FavoriteThingModel.user_id == kwargs['user_id']).first()
+            FavoriteThingModel.user_id == user['id']).first()
         if not favorite_thing:
             raise GraphQLError('Favorite thing does not exist')
         kwargs['category_id'] = favorite_thing.category_id
 
         ReorderFavoriteThings.reorder_favorite_things_on_delete(
-            query, favorite_thing, **kwargs)
+            query, user['id'], favorite_thing, **kwargs)
 
         favorite_thing.delete()
+        AddAudit.add_audit(
+            f"You deleted the favorite thing: '{favorite_thing.title}'", user)
         return DeleteFavoriteThing(favorite_thing=favorite_thing)
 
 
