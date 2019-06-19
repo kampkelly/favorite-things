@@ -3,11 +3,12 @@ import os
 
 sys.path.append(os.getcwd())
 
-from tests.base import BaseTestCase
+from tests.base import BaseTestCase # noqa
 from fixtures.categories.add_category_fixtures import (
     add_category_mutation,
     add_category_mutation_response
-)
+) # noqa
+
 
 class TestAddCategory(BaseTestCase):
     def test_add_category(self):

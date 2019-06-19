@@ -11,7 +11,7 @@ class Authenticator:
             {"id": id, "name": name, "email": email},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
         return token
-        
+
     def authenticate(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

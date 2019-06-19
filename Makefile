@@ -12,7 +12,7 @@ build:
 
 start:
 	@ echo "Starting favorite_things..."
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up
 	@ echo "services started"
 
 stop:

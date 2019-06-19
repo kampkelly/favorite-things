@@ -1,7 +1,8 @@
 import os
 import sys
-from sqlalchemy import Column, String, Integer, Text, JSON, TIMESTAMP
+from sqlalchemy import Column, String, Integer, Text, JSON, TIMESTAMP, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 sys.path.append(os.getcwd())
 
@@ -15,6 +16,8 @@ class FavoriteThing(Base, Utility):
     description = Column(Text(), nullable=True)
     object_metadata = Column("metadata", JSON(), nullable=True)
     ranking = Column(Integer(), nullable=False)
-    category_id = Column(Integer(), nullable=False)
-    user_id = Column(Integer(), nullable=False)
+    category_id = Column(Integer(), ForeignKey('categories.id', ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer(), ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     created_date = Column(TIMESTAMP(timezone=True), server_default=func.now(timezone="WAT"), nullable=False)
+    category = relationship("Category")
+    user = relationship("User")

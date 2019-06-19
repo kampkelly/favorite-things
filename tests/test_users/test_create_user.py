@@ -3,11 +3,12 @@ import os
 
 sys.path.append(os.getcwd())
 
-from tests.base import BaseTestCase
+from tests.base import BaseTestCase # noqa
 from fixtures.users.create_user_fixtures import (
     create_user_mutation,
     create_user_mutation_response
-)
+) # noqa
+
 
 class TestCreateUser(BaseTestCase):
     def test_create_user_(self):
