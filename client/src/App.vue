@@ -12,7 +12,7 @@
 <script>
 import Header from '@/components/Header.vue';
 export default {
-  name: 'App',
+  name: 'signup',
   components: {
     Header,
   },
@@ -23,6 +23,7 @@ export default {
 body {
   margin: 0px;
   overflow-x: hidden;
+  background: rgb(235, 235, 235);
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -30,13 +31,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  a {
+    text-decoration: none;
+  }
 }
 #nav {
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: white;
     &.router-link-exact-active {
-      color: #42b983;
+      color: #cfcfcf;
     }
   }
 }

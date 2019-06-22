@@ -1,12 +1,14 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from './store.js'
 import Home from './views/Home.vue';
 import Signup from './components/Signup.vue';
+import Signin from './components/Signin.vue';
 import Registration from './views/Registration.vue';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -14,6 +16,9 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+      meta: { 
+        requiresAuth: true
+      },
     },
     {
       path: '/registration',
@@ -30,9 +35,12 @@ export default new Router({
         },
         {
           path: 'signin',
-          component: Signup,
+          component: Signin,
         },
       ],
+      meta: { 
+        requiresNoAuth: true
+      },
     },
     {
       path: '/about',
@@ -44,3 +52,23 @@ export default new Router({
     },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.isAuthenticated) {
+      next();
+      return
+    }
+    next('/registration/signin') 
+  } else if (to.matched.some(record => record.meta.requiresNoAuth)) {
+    if (!store.getters.isAuthenticated) {
+      next();
+      return
+    }
+    next('/');
+  } else {
+    next() ;
+  }
+});
+
+export default router;

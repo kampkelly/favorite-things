@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="signup-container">
-            <h5 class="mb-3">Create an account to start entering your favorite things</h5>
+        <div class="signin-container">
+            <h5 class="mb-3">Log in to access your favorite things</h5>
             <ul>
                 <li v-for="(error, index) in this.errors" v-bind:key="index" class="text-danger">
                     {{error}}
@@ -9,23 +9,15 @@
             </ul>
             <form>
                 <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" v-model="name" placeholder="">
-                </div>
-                <div class="form-group">
                     <label for="email">Email</label>
                     <input type="text" class="form-control" id="email" v-model="email" placeholder="">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">Passworddd</label>
                     <input type="password" class="form-control" id="password" v-model="password" placeholder="">
                 </div>
                 <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" v-model="confirmPassword" name="confirm_password" placeholder="">
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-primary" type="submit" v-bind:disabled="disabled" v-on:click="signup">Sign Up</button>
+                    <button class="btn btn-primary" type="submit" v-bind:disabled="disabled" v-on:click="signin">Signin</button>
                 </div>
             </form>
         </div>
@@ -38,8 +30,8 @@ import gql from 'graphql-tag';
 import { LOGIN } from '../mutationTypes';
 
 const filter = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
-const signUpQuery = gql`mutation ($email: String!, $name: String!, $password: String!) {
-  signupUser(email: $email, name: $name, password: $password) {
+const signInQuery = gql`mutation ($email: String!, $password: String!) {
+  signinUser(email: $email, password: $password) {
     user {
       email
       name
@@ -51,10 +43,8 @@ const signUpQuery = gql`mutation ($email: String!, $name: String!, $password: St
 export default {
     data() {
         return {
-            name: '',
             email: '',
             password: '',
-            confirmPassword: '',
             disabled: false,
             errors: [],
             user: {},
@@ -62,23 +52,22 @@ export default {
         };
     },
     methods: {
-        async signup(event) {
+        async signin(event) {
             try {
                 event.preventDefault();
                 this.disabled = true;
                 const validInputs = this.validateFormInputs();
                 if (validInputs) {
                     const data = await this.$apollo.mutate({
-                        mutation: signUpQuery,
+                        mutation: signInQuery,
                         // Parameters
                         variables: {
                             email: this.email,
-                            name: this.name,
                             password: this.password,
                         },
                     });
-                    this.user = data.data.signupUser.user;
-                    this.token = data.data.signupUser.token;
+                    this.user = data.data.signinUser.user;
+                    this.token = data.data.signinUser.token;
                     this.$store.dispatch(LOGIN, { user: this.user, token: this.token });
                     this.$router.push('/');
                 } else {
@@ -91,14 +80,8 @@ export default {
         },
         validateFormInputs() {
             this.errors = [];
-            if (this.password != this.confirmPassword) {
-                this.errors.push('Passwords do not match');
-            }
             if (this.password.length < 8) {
                 this.errors.push('Password must be at least 8 characters');
-            }
-            if (this.name < 1) {
-                this.errors.push('Name is too short');
             }
             if (!filter.test(this.email)) {
                 this.errors.push('Email is not valid');
@@ -115,7 +98,7 @@ export default {
 
 
 <style lang="scss" scoped>
-.signup-container {
+.signin-container {
     background: white;
     padding: 1.2em 5em 1em 5em;
     ul {
