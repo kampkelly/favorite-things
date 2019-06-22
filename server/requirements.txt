@@ -13,3 +13,4 @@ mysql-connector-python
 Flask-Testing==0.7.1
 pyjwt
 flask-bcrypt
+flask-cors
