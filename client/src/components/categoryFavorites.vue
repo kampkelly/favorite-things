@@ -21,12 +21,12 @@
                             <th scope="row">{{favorite.title}}</th>
                             <td>{{favorite.description}}</td>
                             <td>
-                                <li class="" v-for="(key, value) in JSON.parse(favorite.objectMetadata)" v-bind:key="key">
+                                <li class="" v-for="(value, key) in JSON.parse(favorite.objectMetadata)" v-bind:key="key">
                                     {{key}} : {{value}}
                                 </li>
                             </td>
                             <td>{{favorite.ranking}}</td>
-                            <td>Update</td>
+                            <td><router-link :to="`/favorites/update/${favorite.id}`">All favorites</router-link></td>
                             <td>Delete</td>
                         </tr>
                     </tbody>

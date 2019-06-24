@@ -1,7 +1,7 @@
 <template>
     <div>
-         <div class="add-favorite-container">
-            <h5 class="mb-3">Add A New Favorite Thing</h5>
+        <div class="update-favorite-container">
+            <h5 class="mb-3">Update A Favorite Thing</h5>
             <ul>
                 <li v-for="(error, index) in this.errors" v-bind:key="index" class="text-danger">
                     {{error}}
@@ -19,14 +19,17 @@
 
                 <h5>Metadata</h5>
                 <p>{{metadataError}}</p>
-                <div class="form-row metadata-box">
-                    <div class="form-group col-md-5">
-                        <input type="text" class="form-control metadata-key" id="" placeholder="key (optional)">
-                    </div>
-                    <div class="form-group col-md-5">
-                        <input type="text" class="form-control metadata-value" id="" placeholder="value (optional)">
+                <div v-for="(value, key) in originalMetadata" v-bind:key="key">
+                    <div class="form-row metadata-box">
+                        <div class="form-group col-md-5">
+                            <input type="text" class="form-control metadata-key" id="" :value="hm" placeholder="key (optional)">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input type="text" class="form-control metadata-value" id="" :value="value" placeholder="value (optional)">
+                        </div>
                     </div>
                 </div>
+                
                  <!---additional metadatas -->
                 <div v-for="(meta, index) in additionalMetadatas" v-bind:key="meta">
                     <div class="form-row metadata-box">
@@ -48,28 +51,8 @@
                     <label for="ranking">Ranking</label>
                     <input type="number" class="form-control" id="ranking" min="1" max="20" v-model="ranking" placeholder="">
                 </div>
-                <span class="text-success">{{categorySuccess}}</span>
-                <span class="text-danger">{{categoryError}}</span>
-                <div class="form-row new-category-field" v-if="creatingNewCategory">
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="new-category" v-model="newCategoryEntry" placeholder="Enter new category">
-                    </div>
-                    <div class="form-group col-md-5">
-                        <input type="button" class="btn btn-primary mr-2" v-on:click="saveNewCategory" value="save category" v-bind:disabled="disabled">
-                        <a href="#" class="text-danger" v-on:click="toggleCategoryField">cancel</a>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="category">Category</label> <br>
-                        <v-select class="style-chooser" label="name" placeholder="select category" taggable :options="allCategories" :reduce="name => name.id" v-model="categoryId"></v-select>
-                    </div>
-                    <div class="form-group col-md-5 add-category">
-                        <a href="#" v-on:click="toggleCategoryField" class="">add category <i class="fas fa-plus"></i></a>
-                    </div>
-                </div>
                 <div class="form-group">
-                    <button class="btn btn-primary" type="submit" v-bind:disabled="disabled" v-on:click="saveFavorite">Save Favorite Thing</button>
+                    <button class="btn btn-primary" type="submit" v-bind:disabled="disabled" v-on:click="updateFavorite">Update Favorite Thing</button>
                 </div>
             </form>
         </div>
@@ -80,24 +63,20 @@
 // eslint-disable-next-line
 import gql from 'graphql-tag';
 
-const getCategoriesQuery = gql`query {
-  allCategories {
+const singleFavorite = gql`query($id: Int!) {
+  getSingleFavoriteThing(id: $id) {
     id
-    name
+    title
+    description
+    objectMetadata
+    ranking
+    categoryId
   }
-}`;
+}
+`;
 
-const addCategory = gql`mutation ($name: String!) {
-  createCategory(name: $name) {
-    category {
-      id
-      name
-    }
-  }
-}`;
-
-const saveFavoriteThing = gql`mutation ($title: String!, $categoryId: Int!, $description: String!, $objectMetadata: JSONString!, $ranking: Int!) {
-  addFavoriteThing(title: $title, categoryId: $categoryId, description: $description, objectMetadata: $objectMetadata, ranking: $ranking) {
+const updateFavoriteThing = gql`mutation ($id: Int!, $title: String!, $description: String!, $objectMetadata: JSONString!, $ranking: Int!) {
+  updateFavoriteThing(id: $id, title: $title, description: $description, objectMetadata: $objectMetadata, ranking: $ranking) {
     favoriteThing {
       id
       title
@@ -112,30 +91,48 @@ const saveFavoriteThing = gql`mutation ($title: String!, $categoryId: Int!, $des
 export default {
     data() {
         return {
+            getSingleFavoriteThing: {},
             allCategories: [],
             title: '',
             description: '',
             categoryId: '',
             ranking: '',
             metadata: {},
+            originalMetadata: {},
             additionalMetadatas: [],
             errors: [],
             metadataError: '',
-            newCategoryEntry: '',
-            categoryError: '',
-            categorySuccess: '',
             disabled: false,
-            creatingNewCategory: false
+            hm: 'oijo'
         }
     },
     apollo: {
-        allCategories: {
-            query: getCategoriesQuery,
+        getSingleFavoriteThing: {
+            query: singleFavorite,
+            variables () {
+                return {
+                    id: this.$route.params.id
+                }
+            },
+            skip() {
+                return this.skipQuery;
+            },
         },
     },
+    created() {
+        this.fetchFavoriteThing();
+    },
     methods: {
+        async fetchFavoriteThing() {
+            this.$apollo.queries.getSingleFavoriteThing.skip = false;
+            const favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
+            this.title = favoriteThing.data.getSingleFavoriteThing.title;
+            this.description = favoriteThing.data.getSingleFavoriteThing.description;
+            this.originalMetadata = JSON.parse(favoriteThing.data.getSingleFavoriteThing.objectMetadata);
+            this.ranking = favoriteThing.data.getSingleFavoriteThing.ranking;
+            this.categoryId = favoriteThing.data.getSingleFavoriteThing.categoryId;
+        },
         validateInputs() {
-            this.categorySuccess = '';
             if (!this.title.length) {
                 this.errors.push('title cannot be empty');
             }
@@ -177,35 +174,7 @@ export default {
             });
             this.metadata = metadata;
         },
-        toggleCategoryField() {
-            this.categoryError = '';
-            this.creatingNewCategory = !this.creatingNewCategory;
-        },
-        async saveNewCategory() {
-            if (!this.newCategoryEntry.length) {
-                this.categoryError = 'Category name cannot be empty';
-                return true;
-            }
-            this.disabled = true;
-            try {
-                const data = await this.$apollo.mutate({
-                    mutation: addCategory,
-                    variables: {
-                        name: this.newCategoryEntry,
-                    },
-                });
-                const newCategory = data.data.createCategory.category;
-                this.allCategories.push(newCategory);
-                this.categoryError = '';
-                this.categorySuccess = 'category added';
-                this.creatingNewCategory = false;
-            }
-            catch(error) {
-                this.categoryError = error.graphQLErrors[0].message;
-            };
-            this.disabled = false;
-        },
-        async saveFavorite(event) {
+        async updateFavorite(event) {
             this.disabled = true;
             this.errors = [];
             event.preventDefault();
@@ -215,11 +184,11 @@ export default {
             if (validInputs) {
                 try {
                     const data = await self.$apollo.mutate({
-                        mutation: saveFavoriteThing,
+                        mutation:updateFavoriteThing,
                         variables: {
+                            id: self.$route.params.id,
                             title: self.title,
                             description: self.description,
-                            categoryId: self.categoryId,
                             objectMetadata: JSON.stringify(self.metadata),
                             ranking: self.ranking
                         },
@@ -235,14 +204,13 @@ export default {
                 }
             }
             this.disabled = false;
-        },
+        }
     }
 }
 </script>
 
-
 <style lang="scss" scoped>
-.add-favorite-container {
+.update-favorite-container {
     width: 60%;
     margin: auto;
     background: white;
@@ -275,11 +243,5 @@ export default {
         }
     }
     
-}
-.style-chooser .vs__dropdown-toggle {
-    display: none;
-    width: 100%;
-    height: calc(1.5em + .75rem + 2px);
-    color: green;
 }
 </style>
