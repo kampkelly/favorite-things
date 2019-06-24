@@ -19,5 +19,5 @@ class Query(graphene.ObjectType):
         query = Audit.get_query(info)
         user_logs = query.filter(
             AuditModel.user_id == user['id']).order_by(
-                AuditModel.id).all()
+                AuditModel.id.desc()).all()
         return user_logs
