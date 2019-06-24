@@ -241,7 +241,7 @@ export default {
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
 .add-favorite-container {
     width: 60%;
     margin: auto;
@@ -265,7 +265,7 @@ export default {
         }
         .add-category {
             padding-top: 37px;
-            font-size: 12px;
+            font-size: 13px;
         }
         .add-metadata {
             font-size: 13px;
@@ -275,11 +275,5 @@ export default {
         }
     }
     
-}
-.style-chooser .vs__dropdown-toggle {
-    display: none;
-    width: 100%;
-    height: calc(1.5em + .75rem + 2px);
-    color: green;
 }
 </style>

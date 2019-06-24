@@ -4,6 +4,7 @@
      
     <div class="favorites-list-container">
       <span>Filter by:</span>
+      <router-link to="/add-favorite"><i class="fas fa-plus-circle"></i></router-link>
       <div class="bar">
           <router-link to="/favorites/all">All favorites</router-link>
           <router-link to="/favorites/category">Category</router-link>
@@ -21,6 +22,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @keyframes pulse {
+    0%   {
+      transform: scaleX(1);
+    }
+    50%  {
+      transform: scale3d(1.05,1.05,1.05);
+    }
+    100%  {
+      transform: scaleX(1);
+    }
+  }
   .favorites-list-container {
     width: 80%;
     margin: auto;
@@ -29,13 +41,21 @@ export default {
     span {
       float: left;
     }
+    i {
+        float: right;
+        font-size: 2em;
+        color: #6202EE;
+        animation-name: pulse;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+    }
     .bar {
-      width: 30%;
-      display: flex;
-      a {
-        flex: 1;
-        text-decoration: underline !important;
-      }
+        width: 30%;
+        display: flex;
+        a {
+          flex: 1;
+          text-decoration: underline !important;
+        }
     }
   }
 </style>

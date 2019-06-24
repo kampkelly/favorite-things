@@ -41,12 +41,21 @@ body {
   a {
     font-weight: bold;
     color: white;
-    &.router-link-exact-active {
-      color: #cfcfcf;
-    }
   }
 }
 main {
   margin-top: 50px;
 }
+a {
+  &.router-link-exact-active {
+      color: #a5a5a5 !important;
+    }
+}
+.vs__dropdown-toggle {
+    width: 100%;
+}
+.no-favorite-text {
+    font-size: 1.7em;
+    opacity: 0.5;
+  }
 </style>
