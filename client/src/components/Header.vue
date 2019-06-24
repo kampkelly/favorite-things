@@ -6,10 +6,9 @@
                     <h2><router-link to="/favorites">Favorite Things</router-link></h2>
                 </div>
                 <div>
-                    <a href="#" v-on:click="showAuditLogs">Show Audit Logs</a>
-                    <router-link to="/add-favorite" v-if="isAuthenticated == true">Add Favorite</router-link>
+                    <router-link to="/add-favorite" v-if="isAuthenticated == true">Add Favorite Thing</router-link>
+                    <a href="#" v-on:click="showAuditLogs" v-if="isAuthenticated == true">Show Audit Logs</a>
                     <a href="#logout" class="" v-on:click="logout" v-if="isAuthenticated == true">Logout</a>
-                    <i class="fas fa-ellipsis-v"></i>
                 </div>
             </nav>
         </header>
@@ -21,6 +20,7 @@
                     <span>Date: {{logDate(log)}}</span>
                 </li>
             </ul>
+            <p class="no-logs" v-if="!logs.length">You have no logs yet!</p>
         </div>
     </div>
 </template>
@@ -104,10 +104,11 @@ export default {
              color: white;
          }
          > div:nth-child(1) {
-             flex: 5;
+             flex: 1;
              h2 {
-                 text-align: center;
+                 text-align: left;
                  padding-top: 5px;
+                 padding-left: 150px;
                  margin-top: 0px;
                  margin-bottom: 0px;
              }
@@ -115,12 +116,9 @@ export default {
          > div:nth-child(2) {
              flex: 1;
              text-align: right;
+             padding-top: 15px;
              a {
                  padding-right: 15px;
-             }
-             i {
-                 font-size: 1.5em;
-                 padding-top: 13px;
              }
          }
      }
@@ -155,6 +153,11 @@ export default {
          float: left;
          color: grey;
          cursor: pointer;
+     }
+     .no-logs {
+         padding-top: 50px;
+         font-size: 1.7em;
+         opacity: 0.7;
      }
  }
 </style>

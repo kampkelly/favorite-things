@@ -21,9 +21,7 @@
                             <th scope="row">{{favorite.title}}</th>
                             <td>{{favorite.description}}</td>
                             <td>
-                                <li class="" v-for="(value, key) in JSON.parse(favorite.objectMetadata)" v-bind:key="key">
-                                    {{key}} : {{value}}
-                                </li>
+                                <a href="#" v-on:click="showMetadata(JSON.parse(favorite.objectMetadata))">View</a>
                             </td>
                             <td>{{favorite.ranking}}</td>
                             <td><router-link :to="`/favorites/update/${favorite.id}`" class="text-warning">Update</router-link></td>
@@ -34,6 +32,7 @@
                 </div>    
             </li>
         </ul>
+        <p class="no-favorite-text" v-if="!getCategoriesAndFavorites.length">You have not added any favorite thing yet.<br> Click the plus sign to add one.</p>
     </div>
 </template>
 
@@ -88,6 +87,9 @@ export default {
             query: allFavoritesByCategory,
         },
     },
+    async created() {
+        this.$apollo.queries.getCategoriesAndFavorites.refetch();
+    },
     methods: {
         favorites(category) {
             return category.favoriteThings;
@@ -126,7 +128,36 @@ export default {
                 };
                 await self.$apollo.queries.getCategoriesAndFavorites.refetch();
             }
-        }
+        },
+        showMetadata(metadata) {
+            let html = '';
+            const keys = Object.keys(metadata);
+            for (let i = 0; i < keys.length; i++) {
+                html += `<tr><td>${keys[i]}</td>
+                    <td>${metadata[keys[i]]}</td></tr>`;
+            }
+            const innerHtml = `
+            <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">key</th>
+                    <th scope="col">value</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${html}
+            </tbody>
+            </table>`;
+            Swal.fire({
+                title: '<h6>Metadata</h6>',
+                html: innerHtml,
+                focusConfirm: false,
+                confirmButtonText:
+                    'Ok',
+                confirmButtonAriaLabel: 'Thumbs up, great!',
+                showCancelButton: false
+            });
+        },
     },
     filters: {
         capitalize: function (value) {

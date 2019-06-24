@@ -22,7 +22,7 @@
                 <div v-for="(value, key) in originalMetadata" v-bind:key="key">
                     <div class="form-row metadata-box">
                         <div class="form-group col-md-5">
-                            <input type="text" class="form-control metadata-key" id="" :value="hm" placeholder="key (optional)">
+                            <input type="text" class="form-control metadata-key" id="" :value="key" placeholder="key (optional)">
                         </div>
                         <div class="form-group col-md-5">
                             <input type="text" class="form-control metadata-value" id="" :value="value" placeholder="value (optional)">
@@ -103,7 +103,6 @@ export default {
             errors: [],
             metadataError: '',
             disabled: false,
-            hm: 'oijo'
         }
     },
     apollo: {

@@ -18,9 +18,7 @@
                     <th scope="row">{{favorite.title}}</th>
                     <td>{{favorite.description}}</td>
                     <td>
-                        <li class="" v-for="(value, key) in JSON.parse(favorite.objectMetadata)" v-bind:key="key">
-                            {{key}} : {{value}}
-                        </li>
+                        <a href="#" v-on:click="showMetadata(JSON.parse(favorite.objectMetadata))">View</a>
                     </td>
                     <td>{{favorite.ranking}}</td>
                     <td>{{favorite.category.name}}</td>
@@ -29,6 +27,7 @@
                 </tr>
             </tbody>
         </table>
+        <p class="no-favorite-text" v-if="!getFavoriteThings.length">You have not added any favorite thing yet.<br> Click the plus sign to add one.</p>
     </div>
 </template>
 
@@ -82,6 +81,9 @@ export default {
             query: allFavorites,
         },
     },
+    async created() {
+        this.$apollo.queries.getFavoriteThings.refetch();
+    },
     methods: {
         async deleteFavorite(id) {
             const self = this;
@@ -117,6 +119,35 @@ export default {
                 };
                 await self.$apollo.queries.getFavoriteThings.refetch();
             }
+        },
+        showMetadata(metadata) {
+            let html = '';
+            const keys = Object.keys(metadata);
+            for (let i = 0; i < keys.length; i++) {
+                html += `<tr><td>${keys[i]}</td>
+                    <td>${metadata[keys[i]]}</td></tr>`;
+            }
+            const innerHtml = `
+            <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">key</th>
+                    <th scope="col">value</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${html}
+            </tbody>
+            </table>`;
+            Swal.fire({
+                title: '<h6>Metadata</h6>',
+                html: innerHtml,
+                focusConfirm: false,
+                confirmButtonText:
+                    'Ok',
+                confirmButtonAriaLabel: 'Thumbs up, great!',
+                showCancelButton: false
+            });
         }
     }
 }
