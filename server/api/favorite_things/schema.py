@@ -1,5 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
+from graphql import GraphQLError
 
 from .models import FavoriteThing as FavoriteThingModel
 from helpers.favorite_thing.validations import FavoriteThingValidations
@@ -16,6 +17,7 @@ class FavoriteThing(SQLAlchemyObjectType):
 
 class Query(graphene.ObjectType):
     get_favorite_things = graphene.List(FavoriteThing)
+    get_single_favorite_thing = graphene.Field(FavoriteThing, id=graphene.Int(required=True))
 
     @Authenticator.authenticate
     def resolve_get_favorite_things(self, info, **kwargs):
@@ -25,6 +27,17 @@ class Query(graphene.ObjectType):
             FavoriteThingModel.user_id == user['id']).order_by(
                 FavoriteThingModel.ranking).all()
         return favorite_things
+
+    @Authenticator.authenticate
+    def resolve_get_single_favorite_thing(self, info, id):
+        user = info.context.user
+        query = FavoriteThing.get_query(info)
+        favorite_thing = query.filter(
+            FavoriteThingModel.user_id == user['id'],
+            FavoriteThingModel.id == id).first()
+        if not favorite_thing:
+            raise GraphQLError('Favorite thing does not exist')
+        return favorite_thing
 
 
 class AddFavoriteThing(graphene.Mutation):
