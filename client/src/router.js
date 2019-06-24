@@ -6,6 +6,8 @@ import Signup from './components/Signup.vue';
 import Signin from './components/Signin.vue';
 import Registration from './views/Registration.vue';
 import AddFavorite from './views/Favorites/createFavorite.vue';
+import AllFavorites from './components/allFavorites.vue';
+import CategoryFavorites from './components/categoryFavorites.vue';
 
 Vue.use(Router);
 
@@ -41,6 +43,28 @@ const router = new Router({
       ],
       meta: { 
         requiresNoAuth: true
+      },
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: Home,
+      children: [
+        {
+          path: '',
+          component: AllFavorites,
+        },
+        {
+          path: 'all',
+          component: AllFavorites,
+        },
+        {
+          path: 'category',
+          component: CategoryFavorites,
+        },
+      ],
+      meta: { 
+        requiresAuth: true
       },
     },
     {

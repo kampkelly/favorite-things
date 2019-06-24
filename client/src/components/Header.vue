@@ -3,7 +3,7 @@
         <header>
             <nav class="">
                 <div>
-                    <h2><router-link to="/">Favorite Things</router-link></h2>
+                    <h2><router-link to="/favorites">Favorite Things</router-link></h2>
                 </div>
                 <div>
                     <router-link to="/add-favorite" v-if="isAuthenticated == true">Add Favorite</router-link>
