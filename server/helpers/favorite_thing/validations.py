@@ -19,7 +19,7 @@ class FavoriteThingValidations:
                     errors.append("Title cannot be empty")
             if kwargs['ranking'] < 1:
                 errors.append("Ranking must be greater than 0")
-            if 'description' in kwargs and len(kwargs['description']) < 10:
+            if 'description' in kwargs and kwargs['description'] != '' and len(kwargs['description']) < 10:
                 kwargs['description'] = kwargs['description'].strip()
                 errors.append("Description must be at least 10 characters")
             if 'object_metadata' in kwargs:
