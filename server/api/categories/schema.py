@@ -26,10 +26,10 @@ class CategoryResponse(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    get_categories = graphene.List(Category)
+    all_categories = graphene.List(Category)
     get_categories_and_favorites = graphene.List(CategoryResponse)
 
-    def resolve_get_categories(self, info, **kwargs):
+    def resolve_all_categories(self, info, **kwargs):
         query = Category.get_query(info)
         categories = query.order_by(CategoryModel.id).all()
         return categories
@@ -61,8 +61,8 @@ class CreateCategory(graphene.Mutation):
     @Authenticator.authenticate
     def mutate(self, info, name):
         query = Category.get_query(info)
-        if len(name) < 2:
-            raise GraphQLError("Category name must be up to 2 characters")
+        if not len(name.strip()):
+            raise GraphQLError("Category name cannot be empty")
         existing_category = query.filter(CategoryModel.name == name).first()
         if existing_category:
             raise GraphQLError("Category already exists")

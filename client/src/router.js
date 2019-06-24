@@ -5,6 +5,7 @@ import Home from './views/Home.vue';
 import Signup from './components/Signup.vue';
 import Signin from './components/Signin.vue';
 import Registration from './views/Registration.vue';
+import AddFavorite from './views/Favorites/createFavorite.vue';
 
 Vue.use(Router);
 
@@ -40,6 +41,14 @@ const router = new Router({
       ],
       meta: { 
         requiresNoAuth: true
+      },
+    },
+    {
+      path: '/add-favorite',
+      name: 'addFavorite',
+      component: AddFavorite,
+      meta: { 
+        requiresAuth: true
       },
     },
     {

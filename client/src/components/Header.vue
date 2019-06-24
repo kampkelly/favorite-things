@@ -6,6 +6,7 @@
                     <h2><router-link to="/">Favorite Things</router-link></h2>
                 </div>
                 <div>
+                    <router-link to="/add-favorite" v-if="isAuthenticated == true">Add Favorite</router-link>
                     <a href="#logout" class="" v-on:click="logout" v-if="isAuthenticated == true">Logout</a>
                     <i class="fas fa-ellipsis-v"></i>
                 </div>
