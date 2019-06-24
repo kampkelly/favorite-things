@@ -24,6 +24,7 @@ body {
   margin: 0px;
   overflow-x: hidden;
   background: rgb(235, 235, 235);
+  min-height: 100vh;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
