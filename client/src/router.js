@@ -6,6 +6,7 @@ import Signup from './components/Signup.vue';
 import Signin from './components/Signin.vue';
 import Registration from './views/Registration.vue';
 import AddFavorite from './views/Favorites/createFavorite.vue';
+import UpdateFavorite from './views/Favorites/updateFavorite.vue';
 import AllFavorites from './components/allFavorites.vue';
 import CategoryFavorites from './components/categoryFavorites.vue';
 
@@ -71,6 +72,14 @@ const router = new Router({
       path: '/add-favorite',
       name: 'addFavorite',
       component: AddFavorite,
+      meta: { 
+        requiresAuth: true
+      },
+    },
+    {
+      path: '/favorites/update/:id',
+      name: 'updateFavorite',
+      component: UpdateFavorite,
       meta: { 
         requiresAuth: true
       },
