@@ -24,8 +24,8 @@
                     </td>
                     <td>{{favorite.ranking}}</td>
                     <td>{{favorite.category.name}}</td>
-                    <td><router-link :to="`/favorites/update/${favorite.id}`">All favorites</router-link></td>
-                    <td>Delete</td>
+                    <td><router-link :to="`/favorites/update/${favorite.id}`" class="text-warning">Update</router-link></td>
+                    <td><a href="#" class="text-danger" v-on:click="deleteFavorite(favorite.id)">Delete</a></td>
                 </tr>
             </tbody>
         </table>
@@ -35,6 +35,15 @@
 <script>
 // eslint-disable-next-line
 import gql from 'graphql-tag';
+import Swal from 'sweetalert2';
+
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-danger',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false,
+});
 
 const allFavorites = gql`query {
   getFavoriteThings {
@@ -50,6 +59,18 @@ const allFavorites = gql`query {
   }
 }
 `;
+
+const deleteFavorite = gql`mutation  ($id: Int!){
+  deleteFavoriteThing(id: $id) {
+    favoriteThing {
+      id
+      title
+      ranking
+    }
+  }
+}
+`;
+
 export default {
     data() {
         return {
@@ -61,6 +82,43 @@ export default {
             query: allFavorites,
         },
     },
+    methods: {
+        async deleteFavorite(id) {
+            const self = this;
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
+            if (result.value) {
+                try {
+                    await self.$apollo.mutate({
+                        mutation: deleteFavorite,
+                        variables: {
+                            id: id,
+                        },
+                    });
+                    Swal.fire(
+                        'Deleted!',
+                        'Favorite thing deleted',
+                        'success'
+                    );
+                } catch(err) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelled',
+                        'Favorite thing could not be deleted',
+                        'error'
+                    )
+                    return;
+                };
+                await self.$apollo.queries.getFavoriteThings.refetch();
+            }
+        }
+    }
 }
 </script>
 

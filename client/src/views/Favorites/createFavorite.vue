@@ -214,7 +214,7 @@ export default {
             const self = this;
             if (validInputs) {
                 try {
-                    const data = await self.$apollo.mutate({
+                    await self.$apollo.mutate({
                         mutation: saveFavoriteThing,
                         variables: {
                             title: self.title,
