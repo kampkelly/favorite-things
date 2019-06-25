@@ -23,11 +23,15 @@ import os
 import sys
 
 sys.path.append(os.getcwd())
+env_url = ''
+if os.getenv('APP_SETTINGS') == 'testing':
+    env_url = os.getenv('APP_SETTINGS')
+elif os.getenv('APP_SETTINGS') == 'production':
+    env_url = os.getenv('PROD_DATABASE_URL')
+else:
+    env_url = os.getenv('DEV_DATABASE_URL')
 config.set_main_option(
-    'sqlalchemy.url',
-    os.getenv('TEST_DATABASE_URL') if os.getenv('APP_SETTINGS') == 'testing'
-    else os.getenv('DEV_DATABASE_URL')
-)
+    'sqlalchemy.url', env_url)
 
 from helpers.database import Base
 from api.users.models import User
