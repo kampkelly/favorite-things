@@ -131,26 +131,31 @@ export default {
         },
         showMetadata(metadata) {
             let html = '';
+            let swalHtml = '';
             const keys = Object.keys(metadata);
             for (let i = 0; i < keys.length; i++) {
                 html += `<tr><td>${keys[i]}</td>
                     <td>${metadata[keys[i]]}</td></tr>`;
             }
-            const innerHtml = `
-            <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">key</th>
-                    <th scope="col">value</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${html}
-            </tbody>
-            </table>`;
+            if (!keys.length) {
+                swalHtml = 'no metadata';
+            } else {
+                swalHtml = `
+                <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">key</th>
+                        <th scope="col">value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${html}
+                </tbody>
+                </table>`;
+            }
             Swal.fire({
                 title: '<h6>Metadata</h6>',
-                html: innerHtml,
+                html: swalHtml,
                 focusConfirm: false,
                 confirmButtonText:
                     'Ok',
