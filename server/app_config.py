@@ -19,7 +19,6 @@ def create_app(config_name):
 
     return app
 
-
 app = create_app(os.getenv('APP_SETTINGS'))
 
 bcrypt = Bcrypt(app)
