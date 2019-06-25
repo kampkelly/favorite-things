@@ -15,9 +15,9 @@ class FavoriteThing(SQLAlchemyObjectType):
     class Meta:
         model = FavoriteThingModel
 
-
 class ReorderFavoriteThings:
 
+    @staticmethod
     def get_user_info_query_variables(args):
         info = args[1]
         user = info.context.user
