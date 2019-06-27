@@ -1,5 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
+from graphql import GraphQLError
 
 from .models import Audit as AuditModel
 from helpers.user.authenticator import Authenticator
@@ -17,7 +18,10 @@ class Query(graphene.ObjectType):
     def resolve_get_user_logs(self, info, **kwargs):
         user = info.context.user
         query = Audit.get_query(info)
-        user_logs = query.filter(
-            AuditModel.user_id == user['id']).order_by(
-                AuditModel.id.desc()).all()
+        try:
+            user_logs = query.filter(
+                AuditModel.user_id == user['id']).order_by(
+                    AuditModel.id.desc()).all()
+        except:
+            raise GraphQLError('Server Error')
         return user_logs

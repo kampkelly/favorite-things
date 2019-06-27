@@ -79,6 +79,7 @@
 <script>
 // eslint-disable-next-line
 import gql from 'graphql-tag';
+import { SET_APP_ERROR_MESSAGE } from '../../mutationTypes';
 
 const getCategoriesQuery = gql`query {
   allCategories {
@@ -227,11 +228,7 @@ export default {
                     this.$router.push('/favorites');
                 }
                 catch(error) {
-                    if (!error.graphQLErrors[0]) {
-                        this.errors.push('Server error');
-                    } else {
-                        this.errors.push(error.graphQLErrors[0].message);
-                    }
+                    this.errors.push(error.graphQLErrors[0] ? error.graphQLErrors[0].message : 'Server error');
                 }
             }
             this.disabled = false;

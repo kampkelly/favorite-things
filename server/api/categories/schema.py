@@ -31,7 +31,10 @@ class Query(graphene.ObjectType):
 
     def resolve_all_categories(self, info, **kwargs):
         query = Category.get_query(info)
-        categories = query.order_by(CategoryModel.id).all()
+        try:
+            categories = query.order_by(CategoryModel.id).all()
+        except:
+            raise GraphQLError('Server Error')
         return categories
 
     @Authenticator.authenticate
@@ -39,17 +42,20 @@ class Query(graphene.ObjectType):
         user = info.context.user
         query = Category.get_query(info)
         query_favorite_things = FavoriteThing.get_query(info)
-        categories = query.order_by(CategoryModel.id).all()
-        category_responses = []
-        for category in categories:
-            favorites = query_favorite_things.filter(
-                FavoriteThingModel.user_id == user['id'],
-                FavoriteThingModel.category_id == category.id).order_by(
-                    FavoriteThingModel.ranking).all()
-            if not len(favorites):
-                continue
-            category_response = CategoryResponse(id=category.id, name=category.name, favorite_things=favorites)
-            category_responses.append(category_response)
+        try:
+            categories = query.order_by(CategoryModel.id).all()
+            category_responses = []
+            for category in categories:
+                favorites = query_favorite_things.filter(
+                    FavoriteThingModel.user_id == user['id'],
+                    FavoriteThingModel.category_id == category.id).order_by(
+                        FavoriteThingModel.ranking).all()
+                if not len(favorites):
+                    continue
+                category_response = CategoryResponse(id=category.id, name=category.name, favorite_things=favorites)
+                category_responses.append(category_response)
+        except:
+            raise GraphQLError('Server Error')
         return category_responses
 
 
@@ -63,13 +69,16 @@ class CreateCategory(graphene.Mutation):
         query = Category.get_query(info)
         if not len(name.strip()):
             raise GraphQLError("Category name cannot be empty")
-        existing_category = query.filter(CategoryModel.name == name).first()
-        if existing_category:
-            raise GraphQLError("Category already exists")
-        category = CategoryModel(name=name)
-        category.save()
-        user = info.context.user
-        AddAudit.add_audit(f"You created a category: '{category.name}'", user)
+        try:
+            existing_category = query.filter(CategoryModel.name == name).first()
+            if existing_category:
+                raise GraphQLError("Category already exists")
+            category = CategoryModel(name=name)
+            category.save()
+            user = info.context.user
+            AddAudit.add_audit(f"You created a category: '{category.name}'", user)
+        except:
+            raise GraphQLError('Server Error')
         return CreateCategory(category=category)
 
 
@@ -82,17 +91,20 @@ class DeleteCategory(graphene.Mutation):
     def mutate(self, info, **kwargs):
         query = Category.get_query(info)
         query_favorite_things = FavoriteThing.get_query(info)
-        category = query.filter_by(id=kwargs['id']).first()
-        if category:
-            has_favorite_things = query_favorite_things.filter(
-                FavoriteThingModel.category_id == category.id).all()
-            if has_favorite_things:
-                raise GraphQLError("Cannot delete category because it has favorite things")
-            user = info.context.user
-            AddAudit.add_audit(f"You deleted the category: '{category.name}'", user)
-            category.delete()
-        else:
-            raise GraphQLError("Category does not exist")
+        try:
+            category = query.filter_by(id=kwargs['id']).first()
+            if category:
+                has_favorite_things = query_favorite_things.filter(
+                    FavoriteThingModel.category_id == category.id).all()
+                if has_favorite_things:
+                    raise GraphQLError("Cannot delete category because it has favorite things")
+                user = info.context.user
+                AddAudit.add_audit(f"You deleted the category: '{category.name}'", user)
+                category.delete()
+            else:
+                raise GraphQLError("Category does not exist")
+        except:
+            raise GraphQLError('Server Error')
         return DeleteCategory(category=category)
 
 

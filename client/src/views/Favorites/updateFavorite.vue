@@ -62,6 +62,7 @@
 <script>
 // eslint-disable-next-line
 import gql from 'graphql-tag';
+import { SET_APP_ERROR_MESSAGE } from '../../mutationTypes';
 
 const singleFavorite = gql`query($id: Int!) {
   getSingleFavoriteThing(id: $id) {
@@ -124,7 +125,11 @@ export default {
     methods: {
         async fetchFavoriteThing() {
             this.$apollo.queries.getSingleFavoriteThing.skip = false;
-            const favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
+            try {
+                const favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
+            } catch(err) {
+                this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
+            };
             this.title = favoriteThing.data.getSingleFavoriteThing.title;
             this.description = favoriteThing.data.getSingleFavoriteThing.description;
             this.originalMetadata = JSON.parse(favoriteThing.data.getSingleFavoriteThing.objectMetadata);
@@ -195,11 +200,7 @@ export default {
                     this.$router.push('/favorites');
                 }
                 catch(error) {
-                    if (!error.graphQLErrors[0]) {
-                        this.errors.push('Server error');
-                    } else {
-                        this.errors.push(error.graphQLErrors[0].message);
-                    }
+                    this.errors.push(error.graphQLErrors[0] ? error.graphQLErrors[0].message : 'Server error');
                 }
             }
             this.disabled = false;

@@ -28,6 +28,7 @@
 // eslint-disable-next-line
 import gql from 'graphql-tag';
 import { LOGIN } from '../mutationTypes';
+import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
 
 const filter = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
 const signInQuery = gql`mutation ($email: String!, $password: String!) {

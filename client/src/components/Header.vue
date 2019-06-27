@@ -29,7 +29,8 @@
 // eslint-disable-next-line
 import gql from 'graphql-tag';
 import moment from 'moment';
-import { LOGOUT } from '../mutationTypes'
+import { LOGOUT } from '../mutationTypes';
+import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
 
 const getUserLogs = gql`query {
   getUserLogs {
@@ -68,11 +69,16 @@ export default {
         this.$router.push('/registration/signin');
       },
       async showAuditLogs() {
-          $('.logs-container').animate({right: "0%"}, 200);
+          $('.logs-container').animate({ right: "0%" }, 200);
           this.$apollo.queries.getUserLogs.skip = false;
-          const logs = await this.$apollo.queries.getUserLogs.refetch();
+          try {
+            const logs = await this.$apollo.queries.getUserLogs.refetch();
+            this.closeLogButton = true;
+          } catch(err) {
+              this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
+              this.closeLogButton = true;
+          }
           this.logs = logs.data.getUserLogs;
-          this.closeLogButton = true;
       },
       closeLogsContainer() {
           $('.logs-container').animate({right: "-25%"}, 500);
