@@ -16,11 +16,19 @@ class Authenticator:
     def authenticate(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            if 'Access-Token' in args[1].context.headers:
-                token = args[1].context.headers['Access-Token']
-                decoded = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=['HS256'])
-                args[1].context.user = decoded
+            if os.getenv('APP_SETTINGS') == 'testing':
+                if 'Access-Token' in args[1].context:
+                    token = args[1].context['Access-Token']
+                    decoded = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=['HS256'])
+                    args[1].context['user'] = decoded
+                else:
+                    raise GraphQLError('Access Token is empty')
             else:
-                raise GraphQLError('Access Token is empty')
+                if 'Access-Token' in args[1].context.headers:
+                    token = args[1].context.headers['Access-Token']
+                    decoded = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=['HS256'])
+                    args[1].context.user = decoded
+                else:
+                    raise GraphQLError('Access Token is empty')
             return func(*args, **kwargs)
         return wrapper

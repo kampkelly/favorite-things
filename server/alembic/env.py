@@ -25,7 +25,7 @@ import sys
 sys.path.append(os.getcwd())
 env_url = ''
 if os.getenv('APP_SETTINGS') == 'testing':
-    env_url = os.getenv('APP_SETTINGS')
+    env_url = os.getenv('TEST_DATABASE_URL')
 elif os.getenv('APP_SETTINGS') == 'production':
     env_url = os.getenv('PROD_DATABASE_URL')
 else:

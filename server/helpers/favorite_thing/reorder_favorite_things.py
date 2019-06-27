@@ -15,6 +15,7 @@ class FavoriteThing(SQLAlchemyObjectType):
     class Meta:
         model = FavoriteThingModel
 
+
 class ReorderFavoriteThings:
 
     @staticmethod
