@@ -1,5 +1,5 @@
 query_all_categories_query = '''query {
-  getCategories {
+  allCategories {
     name
   }
 }
@@ -7,7 +7,7 @@ query_all_categories_query = '''query {
 
 query_all_categories_query_response = {
   "data": {
-    "getCategories": [
+    "allCategories": [
       {
         "name": "person"
       },
@@ -16,6 +16,36 @@ query_all_categories_query_response = {
       },
       {
         "name": "food"
+      }
+    ]
+  }
+}
+
+query_categories_with_favorites_query = '''query {
+  getCategoriesAndFavorites {
+    id
+    name
+    favoriteThings {
+      title
+      ranking
+    }
+  }
+}
+
+'''
+
+query_categories_with_favorites_query_response = {
+  "data": {
+    "getCategoriesAndFavorites": [
+      {
+        "id": 1,
+        "name": "d",
+        "favoriteThings": [
+          {
+            "title": "Football",
+            "ranking": 1
+          }
+        ]
       }
     ]
   }
