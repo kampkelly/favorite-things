@@ -11,6 +11,10 @@ from fixtures.users.create_user_fixtures import (
 
 
 class TestCreateUser(BaseTestCase):
-    def test_create_user_(self):
+    def test_create_user(self):
         user = self.client.execute(create_user_mutation)
         self.assertEquals(user, create_user_mutation_response)
+
+    def test_create_duplicate_user(self):
+        user = self.client.execute(create_user_mutation) # noqa
+        # self.assertIn("An account with this email already exists", str(user))

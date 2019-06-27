@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <div id="nav">
-      <Header></Header>
+      <Header></Header>      
+      <div class="alert alert-danger w-50 m-auto" v-show="this.$store.getters.showAppErrorMessage" role="alert">
+        {{this.$store.getters.appErrorMessage}}
+      </div>
     </div>
     <main>
       <router-view/>

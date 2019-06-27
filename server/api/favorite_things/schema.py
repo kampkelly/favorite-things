@@ -23,18 +23,24 @@ class Query(graphene.ObjectType):
     def resolve_get_favorite_things(self, info, **kwargs):
         user = info.context.user
         query = FavoriteThing.get_query(info)
-        favorite_things = query.filter(
-            FavoriteThingModel.user_id == user['id']).order_by(
-                FavoriteThingModel.ranking).all()
+        try:
+            favorite_things = query.filter(
+                FavoriteThingModel.user_id == user['id']).order_by(
+                    FavoriteThingModel.ranking).all()
+        except:
+            raise GraphQLError('Server Error')
         return favorite_things
 
     @Authenticator.authenticate
     def resolve_get_single_favorite_thing(self, info, id):
         user = info.context.user
         query = FavoriteThing.get_query(info)
-        favorite_thing = query.filter(
-            FavoriteThingModel.user_id == user['id'],
-            FavoriteThingModel.id == id).first()
+        try:
+            favorite_thing = query.filter(
+                FavoriteThingModel.user_id == user['id'],
+                FavoriteThingModel.id == id).first()
+        except:
+            raise GraphQLError('Server Error')
         if not favorite_thing:
             raise GraphQLError('Favorite thing does not exist')
         return favorite_thing
@@ -57,11 +63,14 @@ class AddFavoriteThing(graphene.Mutation):
     def mutate(self, info, **kwargs):
         user = info.context.user
         kwargs['user_id'] = user['id']
-        favorite_thing = FavoriteThingModel(**kwargs)
-        favorite_thing.save()
-        AddAudit.add_audit(
-            f"You added a new favorite thing: '{favorite_thing.title}'\
-            with ranking of '{favorite_thing.ranking}'", user)
+        try:
+            favorite_thing = FavoriteThingModel(**kwargs)
+            favorite_thing.save()
+            AddAudit.add_audit(
+                f"You added a new favorite thing: '{favorite_thing.title}'\
+                with ranking of '{favorite_thing.ranking}'", user)
+        except:
+            raise GraphQLError('Server Error')
         return AddFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -83,10 +92,13 @@ class UpdateFavoriteThing(graphene.Mutation):
     def mutate(self, info, **kwargs):
         user = info.context.user
         favorite_thing = kwargs.pop("favorite_thing", None)
-        update_entity_fields(favorite_thing, **kwargs)
-        favorite_thing.save()
-        AddAudit.add_audit(
-            f"You updated the favorite thing: '{favorite_thing.title}'", user)
+        try:
+            update_entity_fields(favorite_thing, **kwargs)
+            favorite_thing.save()
+            AddAudit.add_audit(
+                f"You updated the favorite thing: '{favorite_thing.title}'", user)
+        except:
+            raise GraphQLError('Server Error')
         return UpdateFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -101,9 +113,12 @@ class DeleteFavoriteThing(graphene.Mutation):
     def mutate(self, info, **kwargs):
         user = info.context.user
         favorite_thing = kwargs.pop("favorite_thing", None)
-        favorite_thing.delete()
-        AddAudit.add_audit(
-            f"You deleted the favorite thing: '{favorite_thing.title}'", user)
+        try:
+            favorite_thing.delete()
+            AddAudit.add_audit(
+                f"You deleted the favorite thing: '{favorite_thing.title}'", user)
+        except:
+            raise GraphQLError('Server Error')
         return DeleteFavoriteThing(favorite_thing=favorite_thing)
 
 

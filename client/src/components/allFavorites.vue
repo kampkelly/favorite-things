@@ -27,7 +27,7 @@
                 </tr>
             </tbody>
         </table>
-        <p class="no-favorite-text" v-if="!getFavoriteThings.length">You have not added any favorite thing yet.<br> Click the plus sign to add one.</p>
+        <p class="no-favorite-text" v-if="getFavoriteThings && !getFavoriteThings.length">You have not added any favorite thing yet.<br> Click the plus sign to add one.</p>
     </div>
 </template>
 
@@ -35,6 +35,7 @@
 // eslint-disable-next-line
 import gql from 'graphql-tag';
 import Swal from 'sweetalert2';
+import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
 
 const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -82,7 +83,11 @@ export default {
         },
     },
     async created() {
-        this.$apollo.queries.getFavoriteThings.refetch();
+        try {
+            await this.$apollo.queries.getFavoriteThings.refetch();
+        } catch(err) {
+            this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
+        };
     },
     methods: {
         async deleteFavorite(id) {
@@ -117,7 +122,11 @@ export default {
                     )
                     return;
                 };
-                await self.$apollo.queries.getFavoriteThings.refetch();
+                try {
+                    await self.$apollo.queries.getFavoriteThings.refetch();
+                } catch(err) {
+                    this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
+                };
             }
         },
         showMetadata(metadata) {

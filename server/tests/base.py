@@ -52,8 +52,12 @@ class BaseTestCase(TestCase):
             # f"You added a new favorite thing: '{favorite.title}'\
             # with ranking of '{favorite.ranking}'", user)
 
-        self.token = jwt.encode(
+        self.expired_token = jwt.encode(
             {"id": 1, "name": 'Runor', "email": 'runor@example.com'},
+            os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
+
+        self.token = jwt.encode(
+            {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': 1371720939},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
 
     def tearDown(self):
