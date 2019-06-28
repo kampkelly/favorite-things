@@ -18,12 +18,14 @@ Base.query = db_session.query_property()
 
 
 class Utility(object):
+    """A class to modify the database."""
     def save(self):
+        """Method for saving data"""
         db_session.add(self)
         db_session.commit()
 
     def delete(self):
-        """Function for deleting objects"""
+        """Method for deleting objects"""
         db_session.delete(self)
         db_session.commit()
 

@@ -12,5 +12,6 @@ from fixtures.favorites.delete_favorite_fixtures import (
 
 class TestDeleteFavorite(BaseTestCase):
     def test_delete_favorite(self):
+        """Test deleting a favorite thing."""
         favorite = self.client.execute(delete_favorite_mutation, context_value={'Access-Token': self.token})
         self.assertEquals(favorite, delete_favorite_mutation_response)

@@ -11,5 +11,6 @@ from fixtures.users.get_user_logs_fixtures import (
 
 class TestGetUserLogs(BaseTestCase):
     def test_get_user_logs(self):
+        """Test query user logs."""
         user_logs = self.client.execute(user_logs_query, context_value={'Access-Token': self.token}) # noqa
         # self.assertIn("You added a new", str(user_logs))
