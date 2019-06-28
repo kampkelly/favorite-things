@@ -13,14 +13,16 @@ from fixtures.categories.add_category_fixtures import (
 
 class TestAddCategory(BaseTestCase):
     def test_add_category(self):
+        """Test adding category."""
         category = self.client.execute(add_category_mutation, context_value={'Access-Token': self.token})
         self.assertEquals(category, add_category_mutation_response)
 
     def test_add_category_without_name(self):
+        """Test adding category without name."""
         category = self.client.execute(add_category_with_no_name_mutation, context_value={'Access-Token': self.token})
         self.assertIn("Category name cannot be empty", str(category))
 
     def test_add_existing_category(self):
-        self.maxDiff = None
+        """Test adding category that already exists."""
         category = self.client.execute(add_category_mutation, context_value={'Access-Token': self.token}) # noqa
         # self.assertIn("Category already exists", str(category))

@@ -5,9 +5,11 @@ from graphql import GraphQLError
 
 
 class Authenticator:
+    """A class to perform authentication a user."""
 
     @staticmethod
     def generate_token(id, name, email):
+        """A methid to generate user token."""
         token = jwt.encode(
             {"id": id, "name": name, "email": email, 'exp': os.getenv('JWT_EXP')},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')

@@ -10,6 +10,13 @@ from helpers.database import Base, Utility # noqa
 
 
 class FavoriteThing(Base, Utility):
+    """
+    An class used to represent the FavoriteThing model
+    
+    Args:
+        Base (class): A Base class for sqlalchemy
+        Utility (class): A class to save and update records
+    """
     __tablename__ = "favorite_things"
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)

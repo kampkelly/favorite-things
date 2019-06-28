@@ -17,11 +17,13 @@ class BaseTestCase(TestCase):
     alembic_configuration = config.Config("./alembic.ini")
 
     def create_app(self):
+        """Creates the app."""
         app = create_app('testing')
         self.client = Client(schema)
         return app
 
     def setUp(self):
+        """Setup the app with database."""
         app = self.create_app()
         bcrypt = Bcrypt(app)
         self.app_test = app.test_client()
@@ -61,6 +63,7 @@ class BaseTestCase(TestCase):
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
 
     def tearDown(self):
+        """Teardown the app and drop all databases."""
         app = self.create_app()
         with app.app_context():
             command.stamp(self.alembic_configuration, 'base')

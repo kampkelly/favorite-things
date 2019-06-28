@@ -4,11 +4,15 @@ from graphql import GraphQLError
 
 
 class FavoriteThingValidations:
-    """ Validate favorite thing entries
-    :methods
-        input_validation
     """
-
+    Validate favorite thing entries
+    
+    Raises:
+        GraphQLError: Raises an error if validation fails
+    
+    Returns:
+        function: The passed in function
+    """
     def input_validation(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

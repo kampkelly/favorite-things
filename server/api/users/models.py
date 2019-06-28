@@ -6,6 +6,13 @@ from api.audit.models import Audit # noqa
 
 
 class User(Base, Utility):
+    """
+    An class used to represent the User model
+    
+    Args:
+        Base (class): A Base class for sqlalchemy
+        Utility (class): A class to save and update records
+    """
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     email = Column(String(100), nullable=False)

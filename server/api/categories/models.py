@@ -9,6 +9,13 @@ from helpers.database import Base, Utility # noqa
 
 
 class Category(Base, Utility):
+    """
+    An class used to represent the Category model
+    
+    Args:
+        Base (class): A Base class for sqlalchemy
+        Utility (class): A class to save and update records
+    """
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
