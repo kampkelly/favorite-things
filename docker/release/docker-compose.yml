@@ -1,51 +1,33 @@
 version: "3.7"
 services:
   api:
-    image: favorite_things_api:v1
+    image: ubuntu_base
     tty: true
     stdin_open: true
     environment:
       - APP_SETTINGS=${APP_SETTINGS}
       - JWT_SECRET=${JWT_SECRET}
-      - DEV_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DEV_DATABASE}?host=favorite_things_database&port=3306
-      - PROD_DATABASE_URL=mysql+mysqlconnector://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_PROD_DATABASE}?host=favorite_things_database_prod&port=3306
-      - TEST_DATABASE_URL=mysql+mysqlconnector://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_TEST_DATABASE}?host=favorite_things_database&port=3306
-    env_file:
-      - ../../.env
+      - DEV_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DATABASE}?host=favorite_things_database&port=3306
+      - PROD_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DATABASE}?host=favorite_things_database_release&port=3306
+      - TEST_DATABASE_URL=mysql+mysqlconnector://root:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_TEST_DATABASE}?host=favorite_things_database&port=3306
     build:
       context: ../../
-      target: api
+      target: ubuntu_base
       dockerfile: docker/release/Dockerfile
     ports:
       - '7000:7000'
     expose:
       - '7000'
     restart: always
-    volumes:
-      - ${PWD}:/src
     depends_on:
       - database
-    container_name: favorite_things_api_prod
+    env_file:
+      - ../../.env
+    container_name: favorite_things_api_release
     command: >
-      sh -c "alembic upgrade head &&
-             python server.py"
-  client:
-    image: favorite_things_client:v1
-    volumes:
-      - ${PWD}/client:/src/client
-    container_name: favorite_things_client_prod
-  nginx:
-    image: favorite_things_nginx:v1
-    restart: always
-    ports:
-      - '8081:80'
-    expose:
-      - '80'
-    build:
-      context: ../../  
-      target: nginx
-      dockerfile: docker/release/Dockerfile
-    container_name: favorite_things_nginx_prod
+      sh -c "cd app/server &&
+             alembic upgrade head &&
+             python3 server.py"
   database:
     image: mysql:latest
     restart: always
@@ -58,4 +40,15 @@ services:
       - '3307:3306'
     expose:
       - '3306'
-    container_name: favorite_things_database_prod
+    container_name: favorite_things_database_release
+  my_nginx:
+    image: ubuntu_base
+    tty: true
+    stdin_open: true
+    restart: always
+    ports:
+      - '8080:80'
+    expose:
+      - '80'
+    command: service nginx start
+    container_name: favorite_things_nginx_release

@@ -1,22 +1,34 @@
-
-FROM node:10 as client
-
-WORKDIR /src/client
-
-COPY client/package.json /src/client
-
-COPY .env /src/client
-
-COPY client /src/client
-
-RUN npm install
-
+# api configuration
 FROM python:3 as api
 
-WORKDIR /src/server
+WORKDIR /app/server
 
-COPY server/requirements.txt /src/server
+COPY server /app/server
 
-RUN pip install -r requirements.txt
+COPY .env /app/server
 
-COPY .env /src/server
+# client configuration
+FROM node:10 as client
+
+WORKDIR /app/client
+
+COPY client /app/client
+
+COPY .env /app/client
+
+# ubuntu base image configuration
+FROM ubuntu:latest as ubuntu_base
+
+WORKDIR /src/
+
+COPY --from=api /app/server /src/app/server
+
+COPY --from=client /app/client /src/app/client
+
+COPY .env /src/app
+
+COPY /docker/dev/dependencies.sh /src
+
+RUN chmod +x ./dependencies.sh
+
+RUN ./dependencies.sh
