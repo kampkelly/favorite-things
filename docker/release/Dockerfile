@@ -1,32 +1,38 @@
+# api configuration
+FROM python:3 as api
+
+WORKDIR /app/server
+
+COPY server /app/server
+
+COPY .env /app/server
+
+# client configuration
 FROM node:10 as client
 
-WORKDIR /src/client
+WORKDIR /app/client
 
 COPY client/package.json /src/client
 
-COPY .env /src/client
+COPY .env /app/client
 
-COPY client /src/client
+COPY client /app/client
 
-RUN npm install && npm run build
+# ubuntu base image configuration
+FROM ubuntu:latest as ubuntu_base
 
-FROM nginx as nginx
+WORKDIR /src/
 
+COPY --from=api /app/server /src/app/server
 
-COPY --from=client /src/client/dist /src/client
+COPY --from=client /app/client /src/app/client
 
-COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY .env /src/app
 
-FROM python:3 as api
+COPY /docker/release/dependencies.sh /src
 
-WORKDIR /src/server
+COPY /docker/release/nginx.conf /src
 
-COPY server/requirements.txt /src/server
+RUN chmod +x ./dependencies.sh
 
-COPY .env /src/server
-
-COPY server /src/server
-
-RUN pip install -r requirements.txt
-
-RUN ls -al
+RUN ./dependencies.sh

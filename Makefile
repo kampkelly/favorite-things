@@ -1,42 +1,42 @@
 # filename references
-DEV_FOLDER := docker
+DOCKER_FOLDER := docker
 DEV_COMPOSE_FILE := docker/dev/docker-compose.yml
-REAL_COMPOSE_FILE := docker/release/docker-compose.yml
+RELEASE_COMPOSE_FILE := docker/release/docker-compose.yml
 
 build:
 	@ echo "Building favorite_things..."
 	@ docker-compose -f ${DEV_COMPOSE_FILE} build
 	@ echo "Finished building"
 	@ echo "Starting services"
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
-	@ echo "Services started"
-
-release:
-	@ echo "Building favorite_things..."
-	@ docker-compose -f ${REAL_COMPOSE_FILE} build
-	@ echo "Finished building"
-	@ echo "Starting services"
-	@ docker-compose -f ${REAL_COMPOSE_FILE} up -d
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up
 	@ echo "Services started"
 
 start:
 	@ echo "Starting favorite_things..."
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up
 	@ echo "services started"
 
+release:
+	@ echo "Building release favorite_things..."
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} build
+	@ echo "Finished building"
+	@ echo "Starting services"
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up
+	@ echo "Services started"
+
 start-release:
-	@ echo "Starting favorite_things..."
-	@ docker-compose -f ${REAL_COMPOSE_FILE} up -d
+	@ echo "Starting release favorite_things..."
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up
 	@ echo "services started"
 
 stop:
 	@ docker stop "$(service)"
 
 migrations:
-	@ docker-compose -f ${DEV_COMPOSE_FILE} exec api ../${DEV_FOLDER}/makemigrations.sh "$(message)"
+	@ docker-compose -f ${DEV_COMPOSE_FILE} exec api ../${DOCKER_FOLDER}/makemigrations.sh "$(message)"
 
 migrate:
-	@ docker-compose -f ${DEV_COMPOSE_FILE} exec api ../${DEV_FOLDER}/migration.sh "$(message)"
+	@ docker-compose -f ${DEV_COMPOSE_FILE} exec api ../${DOCKER_FOLDER}/migration.sh "$(message)"
 
 migrate-down:
 	@ docker-compose -f ${DEV_COMPOSE_FILE} exec api alembic downgrade base
@@ -55,4 +55,12 @@ nginx_shell:
 
 test:
 	@ echo 'starting tests...'
-	@ docker-compose -f ${DEV_COMPOSE_FILE} exec app ${DEV_FOLDER}/start_tests.sh "$(test)"
+	@ docker-compose -f ${DEV_COMPOSE_FILE} exec app ${DOCKER_FOLDER}/start_tests.sh "$(test)"
+
+logs:
+	@ echo 'Getting logs...'
+	@ docker-compose -f ${DEV_COMPOSE_FILE} logs
+
+logs_prod:
+	@ echo 'Getting logs...'
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} logs

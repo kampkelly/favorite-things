@@ -47,9 +47,7 @@ class Authenticator:
                         raise GraphQLError('Authorization code has expired')
                     except jwt.exceptions.DecodeError:
                         raise GraphQLError('Invalid token supplied')
-                    # breakpoint()
                     args[1].context.user = decoded
-                    # breakpoint()
                 else:
                     raise GraphQLError('Authorization code is empty')
             return func(*args, **kwargs)
