@@ -44,7 +44,7 @@ class Query(graphene.ObjectType):
                 FavoriteThingModel.user_id == user['id']).order_by(
                     FavoriteThingModel.ranking).all()
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return favorite_things
 
     @Authenticator.authenticate
@@ -57,7 +57,7 @@ class Query(graphene.ObjectType):
                 FavoriteThingModel.user_id == user['id'],
                 FavoriteThingModel.id == id).first()
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         if not favorite_thing:
             raise GraphQLError('Favorite thing does not exist')
         return favorite_thing
@@ -99,7 +99,7 @@ class AddFavoriteThing(graphene.Mutation):
                 f"You added a new favorite thing: '{favorite_thing.title}'\
                 with ranking of '{favorite_thing.ranking}'", user)
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return AddFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -139,7 +139,7 @@ class UpdateFavoriteThing(graphene.Mutation):
             AddAudit.add_audit(
                 f"You updated the favorite thing: '{favorite_thing.title}'", user)
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return UpdateFavoriteThing(favorite_thing=favorite_thing)
 
 
@@ -171,7 +171,7 @@ class DeleteFavoriteThing(graphene.Mutation):
             AddAudit.add_audit(
                 f"You deleted the favorite thing: '{favorite_thing.title}'", user)
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return DeleteFavoriteThing(favorite_thing=favorite_thing)
 
 

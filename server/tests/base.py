@@ -55,15 +55,15 @@ class BaseTestCase(TestCase):
             # with ranking of '{favorite.ranking}'", user)
 
         self.expired_token = jwt.encode(
-            {"id": 1, "name": 'Runor', "email": 'runor@example.com'},
+            {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': '1371'},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
 
         self.token = jwt.encode(
-            {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': 1371720939},
+            {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': os.getenv('JWT_EXP')},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
 
     def tearDown(self):
-        """Teardown the app and drop all databases."""
+        """Teardown the app and drop the database."""
         app = self.create_app()
         with app.app_context():
             command.stamp(self.alembic_configuration, 'base')

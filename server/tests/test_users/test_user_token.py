@@ -22,5 +22,5 @@ class TestUserToken(BaseTestCase):
 
     def test_expired_token_logs(self):
         """Test for expired token."""
-        favorites = self.client.execute(get_all_favorite_query, context_value={'Access-Token': self.token})
+        favorites = self.client.execute(get_all_favorite_query, context_value={'Access-Token': self.expired_token})
         self.assertIn("Access Token has expired", str(favorites))

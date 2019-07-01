@@ -39,5 +39,5 @@ class Query(graphene.ObjectType):
                 AuditModel.user_id == user['id']).order_by(
                     AuditModel.id.desc()).all()
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return user_logs

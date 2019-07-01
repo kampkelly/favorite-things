@@ -20,21 +20,26 @@ export default new Vuex.Store({
       state.token = payload.token;
     },
     SET_APP_ERROR_MESSAGE(state, payload) {
-      state.appErrorMessage = payload;
-      state.showAppErrorMessage = 'true';
+      state.appErrorMessage = payload.message;
+      state.showAppErrorMessage = payload.show;
     }
   },
   actions: {
     LOGIN({ commit }, payload) {
       commit(LOGIN, payload);
+      const message = { message: '', show: false}
+      commit(SET_APP_ERROR_MESSAGE, message);
       localStorage.setItem('token', payload.token)
     },
     LOGOUT({ commit }) {
       commit(LOGOUT);
+      const message = { message: '', show: false}
+      commit(SET_APP_ERROR_MESSAGE, message);
       localStorage.removeItem('token');
     },
     SET_APP_ERROR_MESSAGE({ commit }, payload) {
-      commit(SET_APP_ERROR_MESSAGE, payload);
+      const message = { message: payload, show: true}
+      commit(SET_APP_ERROR_MESSAGE, message);
     },
   },
   getters : {

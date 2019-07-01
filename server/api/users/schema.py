@@ -40,7 +40,7 @@ class Query(graphene.ObjectType):
         try:
             user = query.filter_by(id=user_id).first()
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         return user
 
 
@@ -70,13 +70,13 @@ class SignupUser(graphene.Mutation):
         query = User.get_query(info)
         try:
             existing_user = query.filter(UserModel.email == kwargs['email']).first()
-            if existing_user:
-                raise GraphQLError("An account with this email already exists")
-            user = UserModel(**kwargs)
-            user.save()
-            token = Authenticator.generate_token(user.id, kwargs['name'], kwargs['email'])
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
+        if existing_user:
+            raise GraphQLError("An account with this email already exists")
+        user = UserModel(**kwargs)
+        user.save()
+        token = Authenticator.generate_token(user.id, kwargs['name'], kwargs['email'])
         return SignupUser(user=user, token=token)
 
 
@@ -105,7 +105,7 @@ class SigninUser(graphene.Mutation):
         try:
             user = query.filter(UserModel.email == kwargs['email']).first()
         except:
-            raise GraphQLError('Server Error')
+            raise GraphQLError('Something went wrong. Please try again!')
         if user:
             check_password = bcrypt.check_password_hash(user.password, kwargs['password'])
             if check_password:
