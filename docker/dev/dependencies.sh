@@ -36,7 +36,9 @@ echo "Installing nodejs"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
     nvm install 11.14
+    nvm use 11.14
     echo "Nodejs installed"
+    npm install npm@latest -g
 } || {
     echo "Nodejs installation failed"
 }
@@ -46,6 +48,6 @@ npm rebuild node-sass --force
 echo "Node sass installed"
 
 echo "Install package.json dependencies"
-cd app/client && npm install --versbose
+cd app/client && npm install
 
 echo "Npm install finished"

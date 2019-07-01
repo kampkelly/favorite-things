@@ -11,7 +11,7 @@ from helpers.database import Base, Utility # noqa
 class Category(Base, Utility):
     """
     An class used to represent the Category model
-    
+
     Args:
         Base (class): A Base class for sqlalchemy
         Utility (class): A class to save and update records

@@ -9,10 +9,14 @@ class AddAudit:
     def add_audit(message, user):
         """
         A method to save the user logs
-        
+
         Args:
             message (str): The message to save as the log
             user (object): The user to attach the log to
         """
         audit = AuditModel(log=message, user_id=user['id'])
         audit.save()
+
+    def __str__(self):
+        """Return description of this class."""
+        return "A class to save user log to audit table"

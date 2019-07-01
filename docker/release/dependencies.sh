@@ -20,9 +20,6 @@ else
         echo "python3.7 found."
 fi
 
-echo "Installing virtualenv"
-pip3 install virtualenv
-
 echo "Installing requirements with pip"
 pip3 install -r app/server/requirements.txt
 echo "Python requirements installed"

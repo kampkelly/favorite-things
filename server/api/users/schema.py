@@ -20,13 +20,13 @@ class User(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
     """
     Query to return the User data
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: User data
     """
@@ -47,13 +47,13 @@ class Query(graphene.ObjectType):
 class SignupUser(graphene.Mutation):
     """
     A mutation to sign up a user
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: User that has been created
     """
@@ -83,13 +83,13 @@ class SignupUser(graphene.Mutation):
 class SigninUser(graphene.Mutation):
     """
     A mutation to sign in a user
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: User that has been signed in
     """
