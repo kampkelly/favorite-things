@@ -31,13 +31,13 @@ class CategoryResponse(graphene.ObjectType):
 class Query(graphene.ObjectType):
     """
     Query to return the Catgories data
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Categories data
     """
@@ -80,13 +80,13 @@ class Query(graphene.ObjectType):
 class CreateCategory(graphene.Mutation):
     """
     A mutation to create a category
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Category that has been created
     """
@@ -118,13 +118,13 @@ class CreateCategory(graphene.Mutation):
 class DeleteCategory(graphene.Mutation):
     """
     A mutation to delete a category
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Category that has been deleted
     """
@@ -150,7 +150,7 @@ class DeleteCategory(graphene.Mutation):
             category.delete()
         else:
             raise GraphQLError("Category does not exist")
-    
+
         return DeleteCategory(category=category)
 
 

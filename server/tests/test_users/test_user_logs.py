@@ -15,8 +15,8 @@ from fixtures.favorites.add_favorite_fixtures import (
 class TestGetUserLogs(BaseTestCase):
     def test_get_user_logs(self):
         """Test query user logs."""
-        favorite = self.client.execute(
+        self.client.execute(
             add_favorite_mutation,
-            context_value={'Access-Token': self.token})
-        user_logs = self.client.execute(user_logs_query, context_value={'Access-Token': self.token}) # noqa
+            context_value=self.valid_user_token)
+        user_logs = self.client.execute(user_logs_query, context_value=self.valid_user_token) # noqa
         self.assertIn("You added a new", str(user_logs))

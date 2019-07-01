@@ -129,7 +129,7 @@ export default {
             try {
                 favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
             } catch(err) {
-                this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
+                this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
             };
             this.title = favoriteThing.data.getSingleFavoriteThing.title;
             this.description = favoriteThing.data.getSingleFavoriteThing.description;
@@ -201,7 +201,7 @@ export default {
                     this.$router.push('/favorites');
                 }
                 catch(error) {
-                    this.errors.push(error.graphQLErrors[0] ? error.graphQLErrors[0].message : 'Server error');
+                    this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
                 }
             }
             this.disabled = false;

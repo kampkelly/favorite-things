@@ -17,13 +17,13 @@ class Audit(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
     """
     Query to return the Audit data
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Audit data
     """
