@@ -25,3 +25,12 @@ add_category_with_no_name_mutation = '''mutation {
   }
 }
 '''
+
+add_duplicate_category_mutation = '''mutation {
+  createCategory(name: "person") {
+    category {
+      name
+    }
+  }
+}
+'''

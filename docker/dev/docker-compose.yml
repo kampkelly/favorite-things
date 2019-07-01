@@ -5,7 +5,7 @@ services:
     tty: true
     stdin_open: true
     environment:
-      - APP_SETTINGS=${APP_SETTINGS}
+      - APP_SETTINGS=development
       - JWT_SECRET=${JWT_SECRET}
       - DEV_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DEV_DATABASE}?host=favorite_things_database&port=3306
       - TEST_DATABASE_URL=mysql+mysqlconnector://root:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_TEST_DATABASE}?host=favorite_things_database&port=3306
@@ -22,6 +22,8 @@ services:
       - ${PWD}:/src
     depends_on:
       - database
+    env_file:
+      - ../../.env
     container_name: favorite_things_api
     command: >
       sh -c "alembic upgrade head &&

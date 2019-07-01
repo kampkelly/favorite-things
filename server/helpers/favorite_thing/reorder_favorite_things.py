@@ -60,7 +60,7 @@ class ReorderFavoriteThings:
                     and kwargs['ranking'] > last_favorite_thing_in_category.ranking): # noqa
                     kwargs['ranking'] = last_favorite_thing_in_category.ranking + 1
             except:
-                raise GraphQLError('Server Error')
+                raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
         return wrapper
 
@@ -77,7 +77,7 @@ class ReorderFavoriteThings:
                         {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
                         synchronize_session=False)
             except:
-                raise GraphQLError('Server Error')
+                raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
         return wrapper
 
@@ -109,7 +109,7 @@ class ReorderFavoriteThings:
                                 {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
                                 synchronize_session=False)
                 except:
-                    raise GraphQLError('Server Error')
+                    raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
         return wrapper
 
@@ -128,7 +128,7 @@ class ReorderFavoriteThings:
                         {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
                         synchronize_session=False)
             except:
-                raise GraphQLError('Server Error')
+                raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
         return wrapper
 
@@ -143,7 +143,7 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.category_id == kwargs['category_id']
                     ).first()
             except:
-                raise GraphQLError('Server Error')
+                raise GraphQLError('Something went wrong. Please try again!')
             if existing_favorite_thing:
                 raise GraphQLError(f"{kwargs['title']} has already been added")
             return func(*args, **kwargs)
@@ -158,7 +158,7 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.id == kwargs['id'],
                     FavoriteThingModel.user_id == user['id']).first()
             except:
-                raise GraphQLError('Server Error')
+                raise GraphQLError('Something went wrong. Please try again!')
             if not favorite_thing:
                 raise GraphQLError('Favorite thing does not exist')
             kwargs['category_id'] = favorite_thing.category_id

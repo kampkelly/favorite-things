@@ -18,3 +18,13 @@ create_user_mutation_response = {
     }
   }
 }
+
+create_duplicate_user_mutation = '''mutation {
+  signupUser(email: "runor@example.com", name: "Runor", password: "password") {
+    user {
+      email
+      name
+    }
+  }
+}
+'''

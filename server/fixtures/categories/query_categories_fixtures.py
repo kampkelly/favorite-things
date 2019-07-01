@@ -39,7 +39,7 @@ query_categories_with_favorites_query_response = {
     "getCategoriesAndFavorites": [
       {
         "id": 1,
-        "name": "d",
+        "name": "person",
         "favoriteThings": [
           {
             "title": "Football",

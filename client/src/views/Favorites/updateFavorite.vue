@@ -125,8 +125,9 @@ export default {
     methods: {
         async fetchFavoriteThing() {
             this.$apollo.queries.getSingleFavoriteThing.skip = false;
+            let favoriteThing = {};
             try {
-                const favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
+                favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
             } catch(err) {
                 this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
             };
@@ -138,16 +139,16 @@ export default {
         },
         validateInputs() {
             if (!this.title.length) {
-                this.errors.push('title cannot be empty');
+                this.errors.push('Title cannot be empty');
             }
             if (isNaN(parseInt(this.ranking))) {
                 this.errors.push('Ranking must be a number');
             }
             if (!this.categoryId) {
-                this.errors.push('category cannot be empty');
+                this.errors.push('Category cannot be empty');
             }
             if (this.description.length && this.description.length < 10) {
-                this.errors.push('description must be up to 10 letters');
+                this.errors.push('Description must be up to 10 letters');
             }
             if (this.errors.length) {
                 this.disabled = false;
@@ -173,7 +174,7 @@ export default {
                     metadata[key] = value
                 }
                 if ((key != '' && value == '') || (key == '' && value != '')) {
-                    self.errors.push('metadata key must have a value');
+                    self.errors.push('Metadata key must have a value');
                 }
             });
             this.metadata = metadata;
