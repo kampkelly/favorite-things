@@ -3,7 +3,7 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
 from app_config import bcrypt
-from .models import User as UserModel
+from api.models import User as UserModel
 from helpers.user.validations import UserValidations
 from helpers.user.authenticator import Authenticator
 
@@ -66,17 +66,23 @@ class SignupUser(graphene.Mutation):
 
     @UserValidations.input_validation
     def mutate(self, info, **kwargs):
-        kwargs['password'] = bcrypt.generate_password_hash(kwargs['password']).decode('utf-8')
+        kwargs['password'] = bcrypt.generate_password_hash(
+            kwargs['password']
+        ).decode('utf-8')
         query = User.get_query(info)
         try:
-            existing_user = query.filter(UserModel.email == kwargs['email']).first()
+            existing_user = query.filter(
+                UserModel.email == kwargs['email']
+            ).first()
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         if existing_user:
             raise GraphQLError("An account with this email already exists")
         user = UserModel(**kwargs)
         user.save()
-        token = Authenticator.generate_token(user.id, kwargs['name'], kwargs['email'])
+        token = Authenticator.generate_token(
+            user.id, kwargs['name'], kwargs['email']
+        )
         return SignupUser(user=user, token=token)
 
 
@@ -107,9 +113,13 @@ class SigninUser(graphene.Mutation):
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         if user:
-            check_password = bcrypt.check_password_hash(user.password, kwargs['password'])
+            check_password = bcrypt.check_password_hash(
+                user.password, kwargs['password']
+            )
             if check_password:
-                token = Authenticator.generate_token(user.id, user.name, user.email)
+                token = Authenticator.generate_token(
+                    user.id, user.name, user.email
+                )
                 return SignupUser(user=user, token=token)
             else:
                 raise GraphQLError("Email or password is incorrect")

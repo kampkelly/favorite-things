@@ -21,5 +21,5 @@ else
 fi
 
 echo "Installing requirements with pip"
-pip3 install -r app/server/requirements.txt
+/usr/bin/python3.7 -m pip install -r app/server/requirements.txt
 echo "Python requirements installed"

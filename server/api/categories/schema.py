@@ -2,8 +2,8 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
-from .models import Category as CategoryModel
-from api.favorite_things.models import FavoriteThing as FavoriteThingModel
+from api.models import Category as CategoryModel
+from api.models import FavoriteThing as FavoriteThingModel
 from api.favorite_things.schema import FavoriteThing
 from helpers.user.authenticator import Authenticator
 from helpers.audit.add_audit import AddAudit
@@ -70,7 +70,11 @@ class Query(graphene.ObjectType):
                         FavoriteThingModel.ranking).all()
                 if not len(favorites):
                     continue
-                category_response = CategoryResponse(id=category.id, name=category.name, favorite_things=favorites)
+                category_response = CategoryResponse(
+                    id=category.id,
+                    name=category.name,
+                    favorite_things=favorites
+                )
                 category_responses.append(category_response)
         except:
             raise GraphQLError('Something went wrong. Please try again!')
@@ -111,7 +115,7 @@ class CreateCategory(graphene.Mutation):
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         user = info.context.user
-        AddAudit.add_audit(f"You created a category: '{category.name}'", user)
+        AddAudit(f"You created a category: '{category.name}'", user).add_audit()
         return CreateCategory(category=category)
 
 
@@ -144,9 +148,12 @@ class DeleteCategory(graphene.Mutation):
             has_favorite_things = query_favorite_things.filter(
                 FavoriteThingModel.category_id == category.id).all()
             if has_favorite_things:
-                raise GraphQLError("Cannot delete category because it has favorite things")
+                raise GraphQLError("Cannot delete category because it has favorite things") # noqa
             user = info.context.user
-            AddAudit.add_audit(f"You deleted the category: '{category.name}'", user)
+            AddAudit(
+                f"You deleted the category: '{category.name}'",
+                user
+            ).add_audit()
             category.delete()
         else:
             raise GraphQLError("Category does not exist")

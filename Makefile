@@ -24,6 +24,7 @@ release:
 	@ echo "Starting services"
 	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up -d
 	@ echo "Services started"
+	@ echo "Deployment complete"
 
 start-release:
 	@ echo "Starting release favorite_things..."
@@ -56,7 +57,7 @@ nginx_shell:
 
 test:
 	@ echo 'starting tests...'
-	@ docker-compose -f ${TEST_COMPOSE_FILE} build
+	@ docker-compose -f ${TEST_COMPOSE_FILE} build --no-cache
 	@ echo "Finished building"
 	@ echo "Starting services"
 	@ docker-compose -f ${TEST_COMPOSE_FILE} up -d

@@ -2,7 +2,7 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
-from .models import Audit as AuditModel
+from api.models import Audit as AuditModel
 from helpers.user.authenticator import Authenticator
 
 

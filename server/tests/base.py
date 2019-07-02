@@ -6,11 +6,8 @@ from flask_bcrypt import Bcrypt
 from graphene.test import Client
 from app_config import create_app
 from schema import schema
-from api.categories.models import Category
-from api.users.models import User
-from api.favorite_things.models import FavoriteThing
+from api.models import User, Category, FavoriteThing
 from helpers.database import Base, engine, db_session
-# from helpers.audit.add_audit import AddAudit
 
 
 class BaseTestCase(TestCase):
@@ -49,10 +46,6 @@ class BaseTestCase(TestCase):
 
             favorite = FavoriteThing(title="Football", ranking=1, category_id=1, user_id=1)
             favorite.save()
-
-            # AddAudit.add_audit(
-            # f"You added a new favorite thing: '{favorite.title}'\
-            # with ranking of '{favorite.ranking}'", user)
 
         self.expired_token = jwt.encode(
             {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': '1371'},
