@@ -9,7 +9,7 @@ class AddAudit:
     def add_audit(message, user):
         """
         A method to save the user logs
-        
+
         Args:
             message (str): The message to save as the log
             user (object): The user to attach the log to

@@ -12,7 +12,7 @@ from helpers.database import Base, Utility # noqa
 class Audit(Base, Utility):
     """
     An class used to represent the Audit model
-    
+
     Args:
         Base (class): A Base class for sqlalchemy
         Utility (class): A class to save and update records

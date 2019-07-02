@@ -15,10 +15,10 @@ from fixtures.categories.query_categories_fixtures import (
 class TestQueryCategories(BaseTestCase):
     def test_query_all_categories(self):
         """Test query all categories."""
-        all_categories = self.client.execute(query_all_categories_query, context_value={'Access-Token': self.token})
+        all_categories = self.client.execute(query_all_categories_query, context_value=self.valid_user_token)
         self.assertEquals(all_categories, query_all_categories_query_response)
 
     def test_query_categories_with_favorites(self):
         """Test query categories that have favorites."""
-        categories_favorites = self.client.execute(query_categories_with_favorites_query, context_value={'Access-Token': self.token}) # noqa
+        categories_favorites = self.client.execute(query_categories_with_favorites_query, context_value=self.valid_user_token) # noqa
         self.assertEquals(categories_favorites, query_categories_with_favorites_query_response)

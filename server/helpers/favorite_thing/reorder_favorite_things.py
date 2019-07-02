@@ -17,17 +17,17 @@ class FavoriteThing(SQLAlchemyObjectType):
 
 
 class ReorderFavoriteThings:
-    """A class to reorder favorite things when creating, 
+    """A class to reorder favorite things when creating,
         updating or deleting
     """
     @staticmethod
     def get_user_info_query_variables(args):
         """
         A method to return the info, query and user objects
-        
+
         Args:
             args (list): A list containing user, info and query
-        
+
         Returns:
             tuple: Info user and query
         """

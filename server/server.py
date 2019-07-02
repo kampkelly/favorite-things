@@ -1,6 +1,5 @@
 from app_config import app
 from flask_graphql import GraphQLView
-from livereload import Server
 from schema import schema
 
 
@@ -13,7 +12,5 @@ app.add_url_rule(
         )
     )
 
-server = Server(app.wsgi_app)
-
-if __name__ == "__main__":
-    server.serve(port=7000, host='0.0.0.0')
+if __name__ == '__main__':
+    app.run(port=7000, host='0.0.0.0')

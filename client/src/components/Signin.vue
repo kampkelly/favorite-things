@@ -44,8 +44,8 @@ const signInQuery = gql`mutation ($email: String!, $password: String!) {
 export default {
     data() {
         return {
-            email: '',
-            password: '',
+            email: 'runor@gmail.com',
+            password: 'password',
             disabled: false,
             errors: [],
             user: {},
@@ -75,7 +75,7 @@ export default {
                     this.disabled = false;
                 }
             } catch (error) {
-                this.errors.push(error.graphQLErrors[0].message);
+                this.errors.push(error.message.split(':')[1]);
                 this.disabled = false;
             }
         },

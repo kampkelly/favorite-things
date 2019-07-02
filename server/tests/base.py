@@ -57,10 +57,12 @@ class BaseTestCase(TestCase):
         self.expired_token = jwt.encode(
             {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': '1371'},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
+        self.expired_user_token = {'user-key': f"Bearer {self.expired_token}"}
 
         self.token = jwt.encode(
             {"id": 1, "name": 'Runor', "email": 'runor@example.com', 'exp': os.getenv('JWT_EXP')},
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
+        self.valid_user_token = {'user-key': f"Bearer {self.token}"}
 
     def tearDown(self):
         """Teardown the app and drop the database."""

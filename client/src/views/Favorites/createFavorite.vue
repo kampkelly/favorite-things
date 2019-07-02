@@ -203,7 +203,7 @@ export default {
             }
             catch(error) {
                 this.categorySuccess = '';
-                this.categoryError = error.graphQLErrors[0].message;
+                this.categoryError = error.message.split(':')[1];
             };
             this.disabled = false;
         },
@@ -229,7 +229,7 @@ export default {
                     this.$router.push('/favorites');
                 }
                 catch(error) {
-                    this.errors.push(error.graphQLErrors[0] ? error.graphQLErrors[0].message : 'Server error');
+                    this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
                 }
             }
             this.disabled = false;
