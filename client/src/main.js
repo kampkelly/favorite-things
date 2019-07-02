@@ -24,7 +24,8 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 
-const httpLink = new HttpLink({ uri: process.env.VUE_APP_URL });
+// const httpLink = new HttpLink({ uri: process.env.VUE_APP_URL });
+const httpLink = new HttpLink({ uri: 'http://ec2-18-219-72-234.us-east-2.compute.amazonaws.com/api' });
 
 const authLink = setContext(({ headers }) => {
   const token = localStorage.getItem('token');

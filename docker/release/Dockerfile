@@ -29,6 +29,8 @@ COPY --from=client /app/client /src/app/client
 
 COPY .env /src/app
 
+COPY client/.env /src/app/client
+
 COPY /docker/release/dependencies.sh /src
 
 COPY /docker/release/nginx.conf /src
