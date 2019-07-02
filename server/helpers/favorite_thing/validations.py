@@ -6,10 +6,10 @@ from graphql import GraphQLError
 class FavoriteThingValidations:
     """
     Validate favorite thing entries
-
+    
     Raises:
         GraphQLError: Raises an error if validation fails
-
+    
     Returns:
         function: The passed in function
     """

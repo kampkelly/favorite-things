@@ -92,7 +92,7 @@ export default {
         try {
             await this.$apollo.queries.getCategoriesAndFavorites.refetch();
         } catch(err) {
-            this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+            this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
         };
     },
     methods: {
@@ -134,7 +134,7 @@ export default {
                 try {
                     await self.$apollo.queries.getCategoriesAndFavorites.refetch();
                 } catch(err) {
-                    this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+                    this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
                 };
             }
         },
