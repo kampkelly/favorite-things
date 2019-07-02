@@ -35,8 +35,8 @@
 <script>
 // eslint-disable-next-line
 import gql from 'graphql-tag';
-import { LOGIN } from '../mutationTypes';
-import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+import { LOGIN, SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+
 
 const filter = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
 const signUpQuery = gql`mutation ($email: String!, $name: String!, $password: String!) {
@@ -50,68 +50,67 @@ const signUpQuery = gql`mutation ($email: String!, $name: String!, $password: St
 }`;
 
 export default {
-    data() {
-        return {
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            disabled: false,
-            errors: [],
-            user: {},
-            token: '',
-        };
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      disabled: false,
+      errors: [],
+      user: {},
+      token: '',
+    };
+  },
+  methods: {
+    async signup(event) {
+      try {
+        event.preventDefault();
+        this.disabled = true;
+        const validInputs = this.validateFormInputs();
+        if (validInputs) {
+          const data = await this.$apollo.mutate({
+            mutation: signUpQuery,
+            // Parameters
+            variables: {
+              email: this.email,
+              name: this.name,
+              password: this.password,
+            },
+          });
+          this.user = data.data.signupUser.user;
+          this.token = data.data.signupUser.token;
+          this.$store.dispatch(LOGIN, { user: this.user, token: this.token });
+          this.$router.push('/');
+        } else {
+          this.disabled = false;
+        }
+      } catch (error) {
+        this.errors.push(error.message.split(':')[1]);
+        this.disabled = false;
+      }
     },
-    methods: {
-        async signup(event) {
-            try {
-                event.preventDefault();
-                this.disabled = true;
-                const validInputs = this.validateFormInputs();
-                if (validInputs) {
-                    const data = await this.$apollo.mutate({
-                        mutation: signUpQuery,
-                        // Parameters
-                        variables: {
-                            email: this.email,
-                            name: this.name,
-                            password: this.password,
-                        },
-                    });
-                    this.user = data.data.signupUser.user;
-                    this.token = data.data.signupUser.token;
-                    this.$store.dispatch(LOGIN, { user: this.user, token: this.token });
-                    this.$router.push('/');
-                } else {
-                    this.disabled = false;
-                }
-            } catch (error) {
-                this.errors.push(error.message.split(':')[1]);
-                this.disabled = false;
-            }
-        },
-        validateFormInputs() {
-            this.errors = [];
-            if (this.password != this.confirmPassword) {
-                this.errors.push('Passwords do not match');
-            }
-            if (this.password.length < 8) {
-                this.errors.push('Password must be at least 8 characters');
-            }
-            if (this.name < 1) {
-                this.errors.push('Name is too short');
-            }
-            if (!filter.test(this.email)) {
-                this.errors.push('Email is not valid');
-            }
-            if (this.errors.length) {
-                return false;
-            } else {
-                return true;
-            }
-        },
-    }
-}
+    validateFormInputs() {
+      this.errors = [];
+      if (this.password != this.confirmPassword) {
+        this.errors.push('Passwords do not match');
+      }
+      if (this.password.length < 8) {
+        this.errors.push('Password must be at least 8 characters');
+      }
+      if (this.name < 1) {
+        this.errors.push('Name is too short');
+      }
+      if (!filter.test(this.email)) {
+        this.errors.push('Email is not valid');
+      }
+      if (this.errors.length) {
+        return false;
+      }
+      return true;
+    },
+  },
+};
 </script>
 
 

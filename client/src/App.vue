@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <Header></Header>      
+      <Header></Header>
       <div class="alert alert-danger w-50 m-auto" v-show="this.$store.getters.showAppErrorMessage" role="alert">
         {{this.$store.getters.appErrorMessage}}
       </div>
@@ -14,12 +14,13 @@
 
 <script>
 import Header from '@/components/Header.vue';
+
 export default {
   name: 'signup',
   components: {
     Header,
   },
-}
+};
 </script>
 
 <style lang="scss">

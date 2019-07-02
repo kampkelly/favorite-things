@@ -27,8 +27,8 @@
 <script>
 // eslint-disable-next-line
 import gql from 'graphql-tag';
-import { LOGIN } from '../mutationTypes';
-import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+import { LOGIN, SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+
 
 const filter = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
 const signInQuery = gql`mutation ($email: String!, $password: String!) {
@@ -42,59 +42,58 @@ const signInQuery = gql`mutation ($email: String!, $password: String!) {
 }`;
 
 export default {
-    data() {
-        return {
-            email: 'runor@gmail.com',
-            password: 'password',
-            disabled: false,
-            errors: [],
-            user: {},
-            token: '',
-        };
+  data() {
+    return {
+      email: 'runor@gmail.com',
+      password: 'password',
+      disabled: false,
+      errors: [],
+      user: {},
+      token: '',
+    };
+  },
+  methods: {
+    async signin(event) {
+      try {
+        event.preventDefault();
+        this.disabled = true;
+        const validInputs = this.validateFormInputs();
+        if (validInputs) {
+          const data = await this.$apollo.mutate({
+            mutation: signInQuery,
+            // Parameters
+            variables: {
+              email: this.email,
+              password: this.password,
+            },
+          });
+          this.user = data.data.signinUser.user;
+          this.token = data.data.signinUser.token;
+          this.$store.dispatch(LOGIN, { user: this.user, token: this.token });
+          this.$router.push('/');
+        } else {
+          this.disabled = false;
+        }
+      } catch (error) {
+        this.errors.push(error.message.split(':')[1]);
+        this.disabled = false;
+      }
     },
-    methods: {
-        async signin(event) {
-            try {
-                event.preventDefault();
-                this.disabled = true;
-                const validInputs = this.validateFormInputs();
-                if (validInputs) {
-                    const data = await this.$apollo.mutate({
-                        mutation: signInQuery,
-                        // Parameters
-                        variables: {
-                            email: this.email,
-                            password: this.password,
-                        },
-                    });
-                    this.user = data.data.signinUser.user;
-                    this.token = data.data.signinUser.token;
-                    this.$store.dispatch(LOGIN, { user: this.user, token: this.token });
-                    this.$router.push('/');
-                } else {
-                    this.disabled = false;
-                }
-            } catch (error) {
-                this.errors.push(error.message.split(':')[1]);
-                this.disabled = false;
-            }
-        },
-        validateFormInputs() {
-            this.errors = [];
-            if (this.password.length < 8) {
-                this.errors.push('Password must be at least 8 characters');
-            }
-            if (!filter.test(this.email)) {
-                this.errors.push('Email is not valid');
-            }
-            if (this.errors.length) {
-                return false;
-            } else {
-                return true;
-            }
-        },
-    }
-}
+    validateFormInputs() {
+      this.errors = [];
+      if (this.password.length < 8) {
+        this.errors.push('Password must be at least 8 characters');
+      }
+      if (!filter.test(this.email)) {
+        this.errors.push('Email is not valid');
+      }
+      if (this.errors.length) {
+        return false;
+      }
+      return true;
+    },
+  },
+};
 </script>
 
 

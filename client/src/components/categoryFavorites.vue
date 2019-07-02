@@ -29,7 +29,7 @@
                         </tr>
                     </tbody>
                 </table>
-                </div>    
+                </div>
             </li>
         </ul>
         <p class="no-favorite-text" v-if="getCategoriesAndFavorites && !getCategoriesAndFavorites.length">You have not added any favorite thing yet.<br> Click the plus sign to add one.</p>
@@ -43,11 +43,11 @@ import Swal from 'sweetalert2';
 import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
 
 const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-        confirmButton: 'btn btn-danger',
-        cancelButton: 'btn btn-danger'
-    },
-    buttonsStyling: false,
+  customClass: {
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-danger',
+  },
+  buttonsStyling: false,
 });
 
 const allFavoritesByCategory = gql`query {
@@ -77,79 +77,79 @@ const deleteFavorite = gql`mutation  ($id: Int!){
 }
 `;
 export default {
-    data() {
-        return {
-            getCategoriesAndFavorites: [],
-            favoriteIndex: -1
-        }
+  data() {
+    return {
+      getCategoriesAndFavorites: [],
+      favoriteIndex: -1,
+    };
+  },
+  apollo: {
+    getCategoriesAndFavorites: {
+      query: allFavoritesByCategory,
     },
-    apollo: {
-        getCategoriesAndFavorites: {
-            query: allFavoritesByCategory,
-        },
+  },
+  async created() {
+    try {
+      await this.$apollo.queries.getCategoriesAndFavorites.refetch();
+    } catch (err) {
+      this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+    }
+  },
+  methods: {
+    favorites(category) {
+      return category.favoriteThings;
     },
-    async created() {
+    async deleteFavorite(id) {
+      const self = this;
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      });
+      if (result.value) {
         try {
-            await this.$apollo.queries.getCategoriesAndFavorites.refetch();
-        } catch(err) {
-            this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-        };
+          await self.$apollo.mutate({
+            mutation: deleteFavorite,
+            variables: {
+              id,
+            },
+          });
+          Swal.fire(
+            'Deleted!',
+            'Favorite thing deleted',
+            'success',
+          );
+        } catch (err) {
+          swalWithBootstrapButtons.fire(
+            'Cancelled',
+            'Favorite thing could not be deleted',
+            'error',
+          );
+          return;
+        }
+        try {
+          await self.$apollo.queries.getCategoriesAndFavorites.refetch();
+        } catch (err) {
+          this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+        }
+      }
     },
-    methods: {
-        favorites(category) {
-            return category.favoriteThings;
-        },
-        async deleteFavorite(id) {
-            const self = this;
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            });
-            if (result.value) {
-                try {
-                    await self.$apollo.mutate({
-                        mutation: deleteFavorite,
-                        variables: {
-                            id: id,
-                        },
-                    });
-                    Swal.fire(
-                        'Deleted!',
-                        'Favorite thing deleted',
-                        'success'
-                    );
-                } catch(err) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelled',
-                        'Favorite thing could not be deleted',
-                        'error'
-                    )
-                    return;
-                };
-                try {
-                    await self.$apollo.queries.getCategoriesAndFavorites.refetch();
-                } catch(err) {
-                    this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-                };
-            }
-        },
-        showMetadata(metadata) {
-            let html = '';
-            let swalHtml = '';
-            const keys = Object.keys(metadata);
-            for (let i = 0; i < keys.length; i++) {
-                html += `<tr><td>${keys[i]}</td>
+    showMetadata(metadata) {
+      let html = '';
+      let swalHtml = '';
+      const keys = Object.keys(metadata);
+      for (let i = 0; i < keys.length; i++) {
+        html += `<tr><td>${keys[i]}</td>
                     <td>${metadata[keys[i]]}</td></tr>`;
-            }
-            if (!keys.length) {
-                swalHtml = 'no metadata';
-            } else {
-                swalHtml = `
+      }
+      if (!keys.length) {
+        swalHtml = 'no metadata';
+      } else {
+        swalHtml = `
                 <table class="table">
                 <thead class="thead-dark">
                     <tr>
@@ -161,26 +161,26 @@ export default {
                     ${html}
                 </tbody>
                 </table>`;
-            }
-            Swal.fire({
-                title: '<h6>Metadata</h6>',
-                html: swalHtml,
-                focusConfirm: false,
-                confirmButtonText:
+      }
+      Swal.fire({
+        title: '<h6>Metadata</h6>',
+        html: swalHtml,
+        focusConfirm: false,
+        confirmButtonText:
                     'Ok',
-                confirmButtonAriaLabel: 'Thumbs up, great!',
-                showCancelButton: false
-            });
-        },
+        confirmButtonAriaLabel: 'Thumbs up, great!',
+        showCancelButton: false,
+      });
     },
-    filters: {
-        capitalize: function (value) {
-            if (!value) return ''
-            value = value.toString()
-            return value.charAt(0).toUpperCase() + value.slice(1)
-        }
-    }
-}
+  },
+  filters: {
+    capitalize(value) {
+      if (!value) return '';
+      value = value.toString();
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

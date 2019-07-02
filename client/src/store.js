@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { LOGIN, LOGOUT, SET_APP_ERROR_MESSAGE } from './mutationTypes'
+import { LOGIN, LOGOUT, SET_APP_ERROR_MESSAGE } from './mutationTypes';
 
 Vue.use(Vuex);
 
@@ -9,7 +9,7 @@ export default new Vuex.Store({
     user: '',
     token: localStorage.getItem('token') || '',
     appErrorMessage: '',
-    showAppErrorMessage: false
+    showAppErrorMessage: false,
   },
   mutations: {
     LOGOUT(state) {
@@ -22,33 +22,29 @@ export default new Vuex.Store({
     SET_APP_ERROR_MESSAGE(state, payload) {
       state.appErrorMessage = payload.message;
       state.showAppErrorMessage = payload.show;
-    }
+    },
   },
   actions: {
     LOGIN({ commit }, payload) {
       commit(LOGIN, payload);
-      const message = { message: '', show: false}
+      const message = { message: '', show: false };
       commit(SET_APP_ERROR_MESSAGE, message);
-      localStorage.setItem('token', payload.token)
+      localStorage.setItem('token', payload.token);
     },
     LOGOUT({ commit }) {
       commit(LOGOUT);
-      const message = { message: '', show: false}
+      const message = { message: '', show: false };
       commit(SET_APP_ERROR_MESSAGE, message);
       localStorage.removeItem('token');
     },
     SET_APP_ERROR_MESSAGE({ commit }, payload) {
-      const message = { message: payload, show: true}
+      const message = { message: payload, show: true };
       commit(SET_APP_ERROR_MESSAGE, message);
     },
   },
-  getters : {
+  getters: {
     isAuthenticated: state => !!state.token,
-    appErrorMessage: state => {
-      return state.appErrorMessage
-    },
-  showAppErrorMessage: state => {
-      return state.showAppErrorMessage
-    },
+    appErrorMessage: state => state.appErrorMessage,
+    showAppErrorMessage: state => state.showAppErrorMessage,
   },
 });
