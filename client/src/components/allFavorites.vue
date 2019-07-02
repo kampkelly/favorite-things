@@ -6,7 +6,7 @@
                 <tr>
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Metadata</th>
+                    <th scope="col">More Info</th>
                     <th scope="col">Ranking</th>
                     <th scope="col">Category</th>
                     <th scope="col">Update</th>
@@ -16,7 +16,8 @@
             <tbody>
                 <tr v-for="favorite in getFavoriteThings" v-bind:key="favorite.id">
                     <th scope="row">{{favorite.title}}</th>
-                    <td>{{favorite.description}}</td>
+                    <td v-if="favorite.description">{{favorite.description}}</td>
+                    <td v-else class="empty-description">empty</td>
                     <td>
                         <a href="#" v-on:click="showMetadata(JSON.parse(favorite.objectMetadata))">View</a>
                     </td>
@@ -94,12 +95,11 @@ export default {
       const self = this;
       const result = await Swal.fire({
         title: 'Are you sure?',
-        text: "You won't be able to revert this!",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes',
       });
       if (result.value) {
         try {
@@ -154,7 +154,7 @@ export default {
                 </table>`;
       }
       Swal.fire({
-        title: '<h6>Metadata</h6>',
+        title: '<h6>More Info</h6>',
         html: swalHtml,
         focusConfirm: false,
         confirmButtonText:
@@ -171,5 +171,9 @@ export default {
 <style lang="scss" scoped>
     li {
         list-style: none;
+    }
+    .empty-description {
+      color: #ccc;
+      font-style: italic;
     }
 </style>

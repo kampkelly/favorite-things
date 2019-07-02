@@ -2,7 +2,7 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql import GraphQLError
 
-from .models import FavoriteThing as FavoriteThingModel
+from api.models import FavoriteThing as FavoriteThingModel
 from helpers.favorite_thing.validations import FavoriteThingValidations
 from helpers.favorite_thing.reorder_favorite_things import ReorderFavoriteThings
 from helpers.user.authenticator import Authenticator
@@ -32,7 +32,10 @@ class Query(graphene.ObjectType):
         [Object]: Favorite Things data
     """
     get_favorite_things = graphene.List(FavoriteThing)
-    get_single_favorite_thing = graphene.Field(FavoriteThing, id=graphene.Int(required=True))
+    get_single_favorite_thing = graphene.Field(
+        FavoriteThing,
+        id=graphene.Int(required=True)
+    )
 
     @Authenticator.authenticate
     def resolve_get_favorite_things(self, info, **kwargs):
@@ -95,9 +98,7 @@ class AddFavoriteThing(graphene.Mutation):
         try:
             favorite_thing = FavoriteThingModel(**kwargs)
             favorite_thing.save()
-            AddAudit.add_audit(
-                f"You added a new favorite thing: '{favorite_thing.title}'\
-                with ranking of '{favorite_thing.ranking}'", user)
+            AddAudit(f"You added a new favorite thing: '{favorite_thing.title}'", user).add_audit() # noqa
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         return AddFavoriteThing(favorite_thing=favorite_thing)
@@ -136,8 +137,7 @@ class UpdateFavoriteThing(graphene.Mutation):
         try:
             update_entity_fields(favorite_thing, **kwargs)
             favorite_thing.save()
-            AddAudit.add_audit(
-                f"You updated the favorite thing: '{favorite_thing.title}'", user)
+            AddAudit(f"You updated the favorite thing: '{favorite_thing.title}'", user).add_audit() # noqa
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         return UpdateFavoriteThing(favorite_thing=favorite_thing)
@@ -168,8 +168,7 @@ class DeleteFavoriteThing(graphene.Mutation):
         favorite_thing = kwargs.pop("favorite_thing", None)
         try:
             favorite_thing.delete()
-            AddAudit.add_audit(
-                f"You deleted the favorite thing: '{favorite_thing.title}'", user)
+            AddAudit(f"You deleted the favorite thing: '{favorite_thing.title}'", user).add_audit() # noqa
         except:
             raise GraphQLError('Something went wrong. Please try again!')
         return DeleteFavoriteThing(favorite_thing=favorite_thing)

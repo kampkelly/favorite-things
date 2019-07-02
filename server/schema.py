@@ -1,15 +1,24 @@
 import graphene
-from api.users.schema import Query as UserQuery, Mutation as UserMutation
-from api.categories.schema import Query as CategoryQuery, Mutation as CategoryMutation
-from api.favorite_things.schema import Query as FavoriteThingQuery, Mutation as FavoriteThingMutation
-from api.audit.schema import Query as AuditQuery
+import api.users.schema
+import api.categories.schema
+import api.favorite_things.schema
+import api.audit.schema
 
 
-class Query(UserQuery, CategoryQuery, FavoriteThingQuery, AuditQuery):
+class Query(
+    api.users.schema.Query,
+    api.categories.schema.Query,
+    api.favorite_things.schema.Query,
+    api.audit.schema.Query
+):
     pass
 
 
-class Mutation(UserMutation, CategoryMutation, FavoriteThingMutation):
+class Mutation(
+    api.users.schema.Mutation,
+    api.categories.schema.Mutation,
+    api.favorite_things.schema.Mutation
+):
     pass
 
 

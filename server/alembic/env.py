@@ -34,7 +34,7 @@ config.set_main_option(
     'sqlalchemy.url', env_url)
 
 from helpers.database import Base
-from api.users.models import User
+from api.models import User, FavoriteThing, Category, Audit
 
 target_metadata = Base.metadata
 

@@ -73,9 +73,9 @@ export default {
             mutation: signUpQuery,
             // Parameters
             variables: {
-              email: this.email,
+              email: this.email.replace(/\s/g, ""),
               name: this.name,
-              password: this.password,
+              password: this.password.replace(/\s/g, ""),
             },
           });
           this.user = data.data.signupUser.user;
@@ -95,13 +95,16 @@ export default {
       if (this.password != this.confirmPassword) {
         this.errors.push('Passwords do not match');
       }
-      if (this.password.length < 8) {
+      if (this.password.replace(/\s/g, "").length < 8) {
         this.errors.push('Password must be at least 8 characters');
       }
-      if (this.name < 1) {
-        this.errors.push('Name is too short');
+      if (this.password.includes(" ")) {
+        this.errors.push('Password cannot contain space');
       }
-      if (!filter.test(this.email)) {
+      if (!this.name.length) {
+        this.errors.push('Name cannot be empty');
+      }
+      if (!filter.test(this.email.replace(/\s/g, ""))) {
         this.errors.push('Email is not valid');
       }
       if (this.errors.length) {

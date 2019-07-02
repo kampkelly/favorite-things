@@ -15,7 +15,7 @@ def create_app(config_name):
 
     @app.route('/', methods=['GET'])
     def index():
-        return json_response(message='Welcome to Favorite Things App')
+        return json_response(message='Welcome to the Favorite Things App')
 
     return app
 

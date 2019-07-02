@@ -64,6 +64,7 @@ export default {
   methods: {
     async logout(event) {
       event.preventDefault();
+      this.closeLogsContainer();
       await this.$store.dispatch(LOGOUT);
       this.$router.push('/');
       this.$router.push('/registration/signin');

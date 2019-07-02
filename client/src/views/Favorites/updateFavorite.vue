@@ -138,7 +138,7 @@ export default {
       this.categoryId = favoriteThing.data.getSingleFavoriteThing.categoryId;
     },
     validateInputs() {
-      if (!this.title.length) {
+      if (!this.title.trim().length) {
         this.errors.push('Title cannot be empty');
       }
       if (isNaN(parseInt(this.ranking))) {
@@ -147,7 +147,7 @@ export default {
       if (!this.categoryId) {
         this.errors.push('Category cannot be empty');
       }
-      if (this.description.length && this.description.length < 10) {
+      if (this.description.trim().length && this.description.trim().length < 10) {
         this.errors.push('Description must be up to 10 letters');
       }
       if (this.errors.length) {

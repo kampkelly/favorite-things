@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="registration-container">
+            <h4 class="registration-title">Welcome, keep a list of the things that matter to you!</h4>
             <div class="registration-bar">
                 <router-link to="/registration/signup">Signup</router-link>
                 <router-link to="/registration/signin">Signin</router-link>
@@ -14,6 +15,9 @@
 .registration-container {
     width: 60%;
     margin: auto;
+    .registration-title {
+        color: gray;
+    }
     .registration-bar {
         display: flex;
         padding: 10px 0px 10px 0px;

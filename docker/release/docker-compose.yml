@@ -38,7 +38,7 @@ services:
     expose:
       - '3306'
     container_name: favorite_things_database_release
-  my_nginx:
+  nginx:
     image: ubuntu_base:release
     tty: true
     stdin_open: true

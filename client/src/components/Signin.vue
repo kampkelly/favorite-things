@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="signin-container">
-            <h5 class="mb-3">Log in to access your favorite things</h5>
+            <h5 class="mb-3">Sign in to access your favorite things</h5>
             <ul>
                 <li v-for="(error, index) in this.errors" v-bind:key="index" class="text-danger">
                     {{error}}
@@ -13,7 +13,7 @@
                     <input type="text" class="form-control" id="email" v-model="email" placeholder="">
                 </div>
                 <div class="form-group">
-                    <label for="password">Passworddd</label>
+                    <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" v-model="password" placeholder="">
                 </div>
                 <div class="form-group">
@@ -44,8 +44,8 @@ const signInQuery = gql`mutation ($email: String!, $password: String!) {
 export default {
   data() {
     return {
-      email: 'runor@gmail.com',
-      password: 'password',
+      email: '',
+      password: '',
       disabled: false,
       errors: [],
       user: {},
@@ -63,8 +63,8 @@ export default {
             mutation: signInQuery,
             // Parameters
             variables: {
-              email: this.email,
-              password: this.password,
+              email: this.email.replace(/\s/g, ""),
+              password: this.password.replace(/\s/g, ""),
             },
           });
           this.user = data.data.signinUser.user;
@@ -81,10 +81,13 @@ export default {
     },
     validateFormInputs() {
       this.errors = [];
-      if (this.password.length < 8) {
+      if (this.password.replace(/\s/g, "").length < 8) {
         this.errors.push('Password must be at least 8 characters');
       }
-      if (!filter.test(this.email)) {
+      if (this.password.includes(" ")) {
+        this.errors.push('Password cannot contain space');
+      }
+      if (!filter.test(this.email.replace(/\s/g, ""))) {
         this.errors.push('Email is not valid');
       }
       if (this.errors.length) {
