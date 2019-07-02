@@ -86,7 +86,7 @@ export default {
                     this.disabled = false;
                 }
             } catch (error) {
-                this.errors.push(error.message.split(':')[1]);
+                this.errors.push(error.graphQLErrors[0].message);
                 this.disabled = false;
             }
         },

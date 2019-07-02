@@ -8,7 +8,7 @@ services:
       - APP_SETTINGS=${APP_SETTINGS}
       - JWT_SECRET=${JWT_SECRET}
       - DEV_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DATABASE}?host=favorite_things_database&port=3306
-      - PROD_DATABASE_URL=mysql+mysqlconnector://root:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_DATABASE}?host=favorite_things_database_release&port=3306
+      - PROD_DATABASE_URL=mysql+mysqlconnector://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost/${MYSQL_DATABASE}?host=favorite_things_database_release&port=3306
       - TEST_DATABASE_URL=mysql+mysqlconnector://root:${MYSQL_ROOT_PASSWORD}@localhost/${MYSQL_TEST_DATABASE}?host=favorite_things_database&port=3306
     build:
       context: ../../
@@ -27,7 +27,7 @@ services:
     command: >
       sh -c "cd app/server &&
              alembic upgrade head &&
-             gunicorn wsgi:app --worker-class gevent -b 0.0.0.0:7000 --reload --log-syslog"
+             python3 server.py"
   database:
     image: mysql:latest
     restart: always

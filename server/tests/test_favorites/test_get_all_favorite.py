@@ -13,5 +13,5 @@ from fixtures.favorites.get_all_favorite_fixtures import (
 class TestGetAllFavorite(BaseTestCase):
     def test_get_all_favorite(self):
         """Test querying all favorite things."""
-        favorites = self.client.execute(get_all_favorite_query, context_value=self.valid_user_token)
+        favorites = self.client.execute(get_all_favorite_query, context_value={'Access-Token': self.token})
         self.assertEquals(favorites, get_all_favorite_response)

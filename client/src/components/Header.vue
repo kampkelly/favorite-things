@@ -71,16 +71,14 @@ export default {
       async showAuditLogs() {
           $('.logs-container').animate({ right: "0%" }, 200);
           this.$apollo.queries.getUserLogs.skip = false;
-          let logs = [];
           try {
-            logs = await this.$apollo.queries.getUserLogs.refetch();
-            this.logs = logs.data.getUserLogs;
-            console.log(this.logs);
+            const logs = await this.$apollo.queries.getUserLogs.refetch();
             this.closeLogButton = true;
           } catch(err) {
+              this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.graphQLErrors[0].message);
               this.closeLogButton = true;
-              this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
           }
+          this.logs = logs.data.getUserLogs;
       },
       closeLogsContainer() {
           $('.logs-container').animate({right: "-25%"}, 500);
