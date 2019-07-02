@@ -21,13 +21,13 @@ class FavoriteThing(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
     """
     Query to return the Favorite Things data
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Favorite Things data
     """
@@ -66,13 +66,13 @@ class Query(graphene.ObjectType):
 class AddFavoriteThing(graphene.Mutation):
     """
     A mutation to add a favorite thing
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Favorite thing that has been created
     """
@@ -106,13 +106,13 @@ class AddFavoriteThing(graphene.Mutation):
 class UpdateFavoriteThing(graphene.Mutation):
     """
     A mutation to update a favorite thing
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Favorite thing that has been updated
     """
@@ -146,13 +146,13 @@ class UpdateFavoriteThing(graphene.Mutation):
 class DeleteFavoriteThing(graphene.Mutation):
     """
     A mutation to delete a favorite thing
-    
+
     Args:
         graphene (ObjectType): The graphene object
-    
+
     Raises:
         GraphQLError: Raises an error when it occurs
-    
+
     Returns:
         [Object]: Favorite thing that has been deleted
     """

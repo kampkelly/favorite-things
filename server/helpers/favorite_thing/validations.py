@@ -6,10 +6,10 @@ from graphql import GraphQLError
 class FavoriteThingValidations:
     """
     Validate favorite thing entries
-    
+
     Raises:
         GraphQLError: Raises an error if validation fails
-    
+
     Returns:
         function: The passed in function
     """
@@ -38,3 +38,7 @@ class FavoriteThingValidations:
                 )
             return func(*args, **kwargs)
         return wrapper
+
+    def __str__(self):
+        """Return description of this class."""
+        return "A class to validate user input on creating favorite things"

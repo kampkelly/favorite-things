@@ -17,17 +17,17 @@ class FavoriteThing(SQLAlchemyObjectType):
 
 
 class ReorderFavoriteThings:
-    """A class to reorder favorite things when creating, 
+    """A class to reorder favorite things when creating,
         updating or deleting
     """
     @staticmethod
     def get_user_info_query_variables(args):
         """
         A method to return the info, query and user objects
-        
+
         Args:
             args (list): A list containing user, info and query
-        
+
         Returns:
             tuple: Info user and query
         """
@@ -48,7 +48,7 @@ class ReorderFavoriteThings:
                 last_favorite_thing_in_category = query.filter(
                     FavoriteThingModel.user_id == user['id'],
                     FavoriteThingModel.category_id == kwargs['category_id']
-                    ).order_by(FavoriteThingModel.ranking.desc()).first()
+                ).order_by(FavoriteThingModel.ranking.desc()).first()
                 if not last_favorite_thing_in_category:
                     kwargs['ranking'] = 1
 
@@ -73,9 +73,9 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.category_id == kwargs['category_id'],
                     FavoriteThingModel.user_id == user['id'],
                     FavoriteThingModel.ranking >= kwargs['ranking']
-                    ).update(
-                        {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
-                        synchronize_session=False)
+                ).update(
+                    {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
+                    synchronize_session=False)
             except:
                 raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
@@ -95,9 +95,9 @@ class ReorderFavoriteThings:
                             FavoriteThingModel.ranking > favorite_thing.ranking,
                             FavoriteThingModel.ranking <= kwargs['ranking'],
                             FavoriteThingModel.id != kwargs['id']
-                            ).update(
-                                {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
-                                synchronize_session=False)
+                        ).update(
+                            {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
+                            synchronize_session=False)
                     elif favorite_thing.ranking > kwargs['ranking']:
                         query.filter(
                             FavoriteThingModel.category_id == kwargs['category_id'],
@@ -105,9 +105,9 @@ class ReorderFavoriteThings:
                             FavoriteThingModel.ranking < favorite_thing.ranking,
                             FavoriteThingModel.ranking >= kwargs['ranking'],
                             FavoriteThingModel.id != kwargs['id']
-                            ).update(
-                                {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
-                                synchronize_session=False)
+                        ).update(
+                            {FavoriteThingModel.ranking: FavoriteThingModel.ranking + 1},
+                            synchronize_session=False)
                 except:
                     raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
@@ -124,9 +124,9 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.user_id == user['id'],
                     FavoriteThingModel.ranking > favorite_thing.ranking,
                     FavoriteThingModel.id != kwargs['id']
-                    ).update(
-                        {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
-                        synchronize_session=False)
+                ).update(
+                    {FavoriteThingModel.ranking: FavoriteThingModel.ranking - 1},
+                    synchronize_session=False)
             except:
                 raise GraphQLError('Something went wrong. Please try again!')
             return func(*args, **kwargs)
@@ -141,7 +141,7 @@ class ReorderFavoriteThings:
                     FavoriteThingModel.title == kwargs['title'],
                     FavoriteThingModel.user_id == user['id'],
                     FavoriteThingModel.category_id == kwargs['category_id']
-                    ).first()
+                ).first()
             except:
                 raise GraphQLError('Something went wrong. Please try again!')
             if existing_favorite_thing:
@@ -165,3 +165,7 @@ class ReorderFavoriteThings:
             kwargs['favorite_thing'] = favorite_thing
             return func(*args, **kwargs)
         return wrapper
+
+    def __str__(self):
+        """Return description of favorite class."""
+        return "A class to perform operations on favorite things on CRUD actions"

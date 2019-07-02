@@ -32,3 +32,7 @@ class UserValidations:
                 )
             return func(*args, **kwargs)
         return wrapper
+
+    def __str__(self):
+        """Return description of this class."""
+        return "A class to validate user input on registration"

@@ -1,6 +1,5 @@
 Flask
 flask_json
-livereload==2.5.1
 flake8
 tox
 pytest
@@ -14,3 +13,5 @@ Flask-Testing==0.7.1
 pyjwt
 flask-bcrypt
 flask-cors
+gunicorn
+gevent

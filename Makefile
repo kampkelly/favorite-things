@@ -1,6 +1,7 @@
 # filename references
 DOCKER_FOLDER := docker
 DEV_COMPOSE_FILE := docker/dev/docker-compose.yml
+TEST_COMPOSE_FILE := docker/test/docker-compose.yml
 RELEASE_COMPOSE_FILE := docker/release/docker-compose.yml
 
 build:
@@ -8,12 +9,12 @@ build:
 	@ docker-compose -f ${DEV_COMPOSE_FILE} build
 	@ echo "Finished building"
 	@ echo "Starting services"
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
 	@ echo "Services started"
 
 start:
 	@ echo "Starting favorite_things..."
-	@ docker-compose -f ${DEV_COMPOSE_FILE} up
+	@ docker-compose -f ${DEV_COMPOSE_FILE} up -d
 	@ echo "services started"
 
 release:
@@ -21,12 +22,12 @@ release:
 	@ docker-compose -f ${RELEASE_COMPOSE_FILE} build
 	@ echo "Finished building"
 	@ echo "Starting services"
-	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up -d
 	@ echo "Services started"
 
 start-release:
 	@ echo "Starting release favorite_things..."
-	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up
+	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up -d
 	@ echo "services started"
 
 stop:
@@ -55,7 +56,15 @@ nginx_shell:
 
 test:
 	@ echo 'starting tests...'
-	@ docker-compose -f ${DEV_COMPOSE_FILE} exec app ${DOCKER_FOLDER}/start_tests.sh "$(test)"
+	@ docker-compose -f ${TEST_COMPOSE_FILE} build
+	@ echo "Finished building"
+	@ echo "Starting services"
+	@ docker-compose -f ${TEST_COMPOSE_FILE} up -d
+	@ echo "Running tests"
+	@ docker-compose -f ${TEST_COMPOSE_FILE} exec api ./tests.sh
+	@ echo "Tests finished"
+	@ echo "Stopping test containers"
+	@ docker stop test_favorite_things_api test_favorite_things_database
 
 logs:
 	@ echo 'Getting logs...'
