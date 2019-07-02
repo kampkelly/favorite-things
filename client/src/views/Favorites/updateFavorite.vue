@@ -29,7 +29,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                  <!---additional metadatas -->
                 <div v-for="(meta, index) in additionalMetadatas" v-bind:key="meta">
                     <div class="form-row metadata-box">
@@ -46,7 +46,7 @@
                 </div>
                 <!---additional metadatas -->
                 <a href="#" v-on:click="addMetadataField" class="add-metadata">add metadata <i class="fas fa-plus"></i></a>
-   
+
                 <div class="form-group">
                     <label for="ranking">Ranking</label>
                     <input type="number" class="form-control" id="ranking" min="1" max="20" v-model="ranking" placeholder="">
@@ -90,124 +90,122 @@ const updateFavoriteThing = gql`mutation ($id: Int!, $title: String!, $descripti
 `;
 
 export default {
-    data() {
+  data() {
+    return {
+      getSingleFavoriteThing: {},
+      allCategories: [],
+      title: '',
+      description: '',
+      categoryId: '',
+      ranking: '',
+      metadata: {},
+      originalMetadata: {},
+      additionalMetadatas: [],
+      errors: [],
+      metadataError: '',
+      disabled: false,
+    };
+  },
+  apollo: {
+    getSingleFavoriteThing: {
+      query: singleFavorite,
+      variables() {
         return {
-            getSingleFavoriteThing: {},
-            allCategories: [],
-            title: '',
-            description: '',
-            categoryId: '',
-            ranking: '',
-            metadata: {},
-            originalMetadata: {},
-            additionalMetadatas: [],
-            errors: [],
-            metadataError: '',
-            disabled: false,
+          id: this.$route.params.id,
+        };
+      },
+      skip() {
+        return this.skipQuery;
+      },
+    },
+  },
+  created() {
+    this.fetchFavoriteThing();
+  },
+  methods: {
+    async fetchFavoriteThing() {
+      this.$apollo.queries.getSingleFavoriteThing.skip = false;
+      let favoriteThing = {};
+      try {
+        favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
+      } catch (err) {
+        this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+      }
+      this.title = favoriteThing.data.getSingleFavoriteThing.title;
+      this.description = favoriteThing.data.getSingleFavoriteThing.description;
+      this.originalMetadata = JSON.parse(favoriteThing.data.getSingleFavoriteThing.objectMetadata);
+      this.ranking = favoriteThing.data.getSingleFavoriteThing.ranking;
+      this.categoryId = favoriteThing.data.getSingleFavoriteThing.categoryId;
+    },
+    validateInputs() {
+      if (!this.title.length) {
+        this.errors.push('Title cannot be empty');
+      }
+      if (isNaN(parseInt(this.ranking))) {
+        this.errors.push('Ranking must be a number');
+      }
+      if (!this.categoryId) {
+        this.errors.push('Category cannot be empty');
+      }
+      if (this.description.length && this.description.length < 10) {
+        this.errors.push('Description must be up to 10 letters');
+      }
+      if (this.errors.length) {
+        this.disabled = false;
+        return false;
+      }
+      return true;
+    },
+    addMetadataField() {
+      this.additionalMetadatas.push(Math.random());
+    },
+    removeMetadata(index) {
+      const removed = this.additionalMetadatas.splice(index, 1);
+    },
+    combineMetadata() {
+      const self = this;
+      const metadatas = $('.metadata-box');
+      const metadata = {};
+      metadatas.each(function () {
+        const key = $(this).find('.metadata-key').val();
+        const value = $(this).find('.metadata-value').val();
+        if (key != '' && value != '') {
+          metadata[key] = value;
         }
-    },
-    apollo: {
-        getSingleFavoriteThing: {
-            query: singleFavorite,
-            variables () {
-                return {
-                    id: this.$route.params.id
-                }
-            },
-            skip() {
-                return this.skipQuery;
-            },
-        },
-    },
-    created() {
-        this.fetchFavoriteThing();
-    },
-    methods: {
-        async fetchFavoriteThing() {
-            this.$apollo.queries.getSingleFavoriteThing.skip = false;
-            let favoriteThing = {};
-            try {
-                favoriteThing = await this.$apollo.queries.getSingleFavoriteThing.refetch();
-            } catch(err) {
-                this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-            };
-            this.title = favoriteThing.data.getSingleFavoriteThing.title;
-            this.description = favoriteThing.data.getSingleFavoriteThing.description;
-            this.originalMetadata = JSON.parse(favoriteThing.data.getSingleFavoriteThing.objectMetadata);
-            this.ranking = favoriteThing.data.getSingleFavoriteThing.ranking;
-            this.categoryId = favoriteThing.data.getSingleFavoriteThing.categoryId;
-        },
-        validateInputs() {
-            if (!this.title.length) {
-                this.errors.push('Title cannot be empty');
-            }
-            if (isNaN(parseInt(this.ranking))) {
-                this.errors.push('Ranking must be a number');
-            }
-            if (!this.categoryId) {
-                this.errors.push('Category cannot be empty');
-            }
-            if (this.description.length && this.description.length < 10) {
-                this.errors.push('Description must be up to 10 letters');
-            }
-            if (this.errors.length) {
-                this.disabled = false;
-                return false;
-            } else {
-                return true;
-            }
-        },
-        addMetadataField() {
-            this.additionalMetadatas.push(Math.random());
-        },
-        removeMetadata(index) {
-            const removed = this.additionalMetadatas.splice(index,1)
-        },
-        combineMetadata() {
-            const self = this;
-            const metadatas = $('.metadata-box');
-            const metadata = {};
-            metadatas.each(function() {
-                const key = $(this).find(".metadata-key").val();
-                const value = $(this).find(".metadata-value").val();
-                if (key != '' && value != '') {
-                    metadata[key] = value
-                }
-                if ((key != '' && value == '') || (key == '' && value != '')) {
-                    self.errors.push('Metadata key must have a value');
-                }
-            });
-            this.metadata = metadata;
-        },
-        async updateFavorite(event) {
-            this.disabled = true;
-            this.errors = [];
-            event.preventDefault();
-            this.combineMetadata();
-            const validInputs = this.validateInputs();
-            const self = this;
-            if (validInputs) {
-                try {
-                    const data = await self.$apollo.mutate({
-                        mutation:updateFavoriteThing,
-                        variables: {
-                            id: self.$route.params.id,
-                            title: self.title,
-                            description: self.description,
-                            objectMetadata: JSON.stringify(self.metadata),
-                            ranking: self.ranking
-                        },
-                    });
-                    this.$router.push('/favorites');
-                }
-                catch(error) {
-                    this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
-                }
-            }
-            this.disabled = false;
+        if ((key != '' && value == '') || (key == '' && value != '')) {
+          self.errors.push('Metadata key must have a value');
         }
-    }
-}
+      });
+      this.metadata = metadata;
+    },
+    async updateFavorite(event) {
+      this.disabled = true;
+      this.errors = [];
+      event.preventDefault();
+      this.combineMetadata();
+      const validInputs = this.validateInputs();
+      const self = this;
+      if (validInputs) {
+        try {
+          const data = await self.$apollo.mutate({
+            mutation: updateFavoriteThing,
+            variables: {
+              id: self.$route.params.id,
+              title: self.title,
+              description: self.description,
+              objectMetadata: JSON.stringify(self.metadata),
+              ranking: self.ranking,
+            },
+          });
+          this.$router.push('/favorites');
+        } catch (error) {
+          this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
+        }
+      }
+      this.disabled = false;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -243,6 +241,6 @@ export default {
             padding-top: 37px;
         }
     }
-    
+
 }
 </style>

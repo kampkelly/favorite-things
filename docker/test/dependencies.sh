@@ -2,7 +2,7 @@
 
 # installing python
 
-if [ !`which python3` ]; then
+if [ !`which python3.7` ]; then
     echo "...installing python ..."
     { 
 

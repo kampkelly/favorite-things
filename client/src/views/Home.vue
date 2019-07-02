@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h5 class="mb-3">My Favorite Things</h5>
-     
+
     <div class="favorites-list-container">
       <span>Filter by:</span>
       <router-link to="/add-favorite"><i class="fas fa-plus-circle"></i></router-link>

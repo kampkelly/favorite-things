@@ -2,7 +2,7 @@
 
 # installing python
 
-if [ !`which python3` ]; then
+if [ !`which python3.7` ]; then
     echo "...installing python ..."
     { 
 
@@ -25,7 +25,6 @@ pip3 install -r app/server/requirements.txt
 echo "Python requirements installed"
 
 echo "Installing nodejs"
-# cd ../..
 {
     apt-get install curl --yes
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash

@@ -43,7 +43,7 @@
                 </div>
                 <!---additional metadatas -->
                 <a href="#" v-on:click="addMetadataField" class="add-metadata">add metadata <i class="fas fa-plus"></i></a>
-   
+
                 <div class="form-group">
                     <label for="ranking">Ranking</label>
                     <input type="number" class="form-control" id="ranking" min="1" max="20" v-model="ranking" placeholder="">
@@ -111,131 +111,128 @@ const saveFavoriteThing = gql`mutation ($title: String!, $categoryId: Int!, $des
 `;
 
 export default {
-    data() {
-        return {
-            allCategories: [],
-            title: '',
-            description: '',
-            categoryId: '',
-            ranking: '',
-            metadata: {},
-            additionalMetadatas: [],
-            errors: [],
-            metadataError: '',
-            newCategoryEntry: '',
-            categoryError: '',
-            categorySuccess: '',
-            disabled: false,
-            creatingNewCategory: false
+  data() {
+    return {
+      allCategories: [],
+      title: '',
+      description: '',
+      categoryId: '',
+      ranking: '',
+      metadata: {},
+      additionalMetadatas: [],
+      errors: [],
+      metadataError: '',
+      newCategoryEntry: '',
+      categoryError: '',
+      categorySuccess: '',
+      disabled: false,
+      creatingNewCategory: false,
+    };
+  },
+  apollo: {
+    allCategories: {
+      query: getCategoriesQuery,
+    },
+  },
+  methods: {
+    validateInputs() {
+      this.categorySuccess = '';
+      if (!this.title.length) {
+        this.errors.push('Title cannot be empty');
+      }
+      if (isNaN(parseInt(this.ranking))) {
+        this.errors.push('Ranking must be a number');
+      }
+      if (!this.categoryId) {
+        this.errors.push('Category cannot be empty');
+      }
+      if (this.description.length && this.description.length < 10) {
+        this.errors.push('Description must be up to 10 letters');
+      }
+      if (this.errors.length) {
+        this.disabled = false;
+        return false;
+      }
+      return true;
+    },
+    addMetadataField() {
+      this.additionalMetadatas.push(Math.random());
+    },
+    removeMetadata(index) {
+      const removed = this.additionalMetadatas.splice(index, 1);
+    },
+    combineMetadata() {
+      const self = this;
+      const metadatas = $('.metadata-box');
+      const metadata = {};
+      metadatas.each(function () {
+        const key = $(this).find('.metadata-key').val();
+        const value = $(this).find('.metadata-value').val();
+        if (key != '' && value != '') {
+          metadata[key] = value;
         }
+        if ((key != '' && value == '') || (key == '' && value != '')) {
+          self.errors.push('Metadata key must have a value');
+        }
+      });
+      this.metadata = metadata;
     },
-    apollo: {
-        allCategories: {
-            query: getCategoriesQuery,
-        },
+    toggleCategoryField() {
+      this.categoryError = '';
+      this.creatingNewCategory = !this.creatingNewCategory;
     },
-    methods: {
-        validateInputs() {
-            this.categorySuccess = '';
-            if (!this.title.length) {
-                this.errors.push('Title cannot be empty');
-            }
-            if (isNaN(parseInt(this.ranking))) {
-                this.errors.push('Ranking must be a number');
-            }
-            if (!this.categoryId) {
-                this.errors.push('Category cannot be empty');
-            }
-            if (this.description.length && this.description.length < 10) {
-                this.errors.push('Description must be up to 10 letters');
-            }
-            if (this.errors.length) {
-                this.disabled = false;
-                return false;
-            } else {
-                return true;
-            }
-        },
-        addMetadataField() {
-            this.additionalMetadatas.push(Math.random());
-        },
-        removeMetadata(index) {
-            const removed = this.additionalMetadatas.splice(index,1)
-        },
-        combineMetadata() {
-            const self = this;
-            const metadatas = $('.metadata-box');
-            const metadata = {};
-            metadatas.each(function() {
-                const key = $(this).find(".metadata-key").val();
-                const value = $(this).find(".metadata-value").val();
-                if (key != '' && value != '') {
-                    metadata[key] = value
-                }
-                if ((key != '' && value == '') || (key == '' && value != '')) {
-                    self.errors.push('Metadata key must have a value');
-                }
-            });
-            this.metadata = metadata;
-        },
-        toggleCategoryField() {
-            this.categoryError = '';
-            this.creatingNewCategory = !this.creatingNewCategory;
-        },
-        async saveNewCategory() {
-            if (!this.newCategoryEntry.length) {
-                this.categoryError = 'Category name cannot be empty';
-                return true;
-            }
-            this.disabled = true;
-            try {
-                const data = await this.$apollo.mutate({
-                    mutation: addCategory,
-                    variables: {
-                        name: this.newCategoryEntry,
-                    },
-                });
-                const newCategory = data.data.createCategory.category;
-                this.allCategories.push(newCategory);
-                this.categoryError = '';
-                this.categorySuccess = 'category added';
-                this.creatingNewCategory = false;
-            }
-            catch(error) {
-                this.categorySuccess = '';
-                this.categoryError = error.message.split(':')[1];
-            };
-            this.disabled = false;
-        },
-        async saveFavorite(event) {
-            this.disabled = true;
-            this.errors = [];
-            event.preventDefault();
-            this.combineMetadata();
-            const validInputs = this.validateInputs();
-            const self = this;
-            if (validInputs) {
-                try {
-                    await self.$apollo.mutate({
-                        mutation: saveFavoriteThing,
-                        variables: {
-                            title: self.title,
-                            description: self.description,
-                            categoryId: self.categoryId,
-                            objectMetadata: JSON.stringify(self.metadata),
-                            ranking: self.ranking
-                        },
-                    });
-                    this.$router.push('/favorites');
-                }
-                catch(error) {
-                    this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
-                }
-            }
-            this.disabled = false;
-        },
-    }
-}
+    async saveNewCategory() {
+      if (!this.newCategoryEntry.length) {
+        this.categoryError = 'Category name cannot be empty';
+        return true;
+      }
+      this.disabled = true;
+      try {
+        const data = await this.$apollo.mutate({
+          mutation: addCategory,
+          variables: {
+            name: this.newCategoryEntry,
+          },
+        });
+        const newCategory = data.data.createCategory.category;
+        this.allCategories.push(newCategory);
+        this.categoryError = '';
+        this.categorySuccess = 'category added';
+        this.creatingNewCategory = false;
+      } catch (error) {
+        this.categorySuccess = '';
+        this.categoryError = error.message.split(':')[1];
+      }
+      this.disabled = false;
+    },
+    async saveFavorite(event) {
+      this.disabled = true;
+      this.errors = [];
+      event.preventDefault();
+      this.combineMetadata();
+      const validInputs = this.validateInputs();
+      const self = this;
+      if (validInputs) {
+        try {
+          await self.$apollo.mutate({
+            mutation: saveFavoriteThing,
+            variables: {
+              title: self.title,
+              description: self.description,
+              categoryId: self.categoryId,
+              objectMetadata: JSON.stringify(self.metadata),
+              ranking: self.ranking,
+            },
+          });
+          this.$router.push('/favorites');
+        } catch (error) {
+          this.errors.push(error.message ? error.message.split(':')[1] : 'Server error');
+        }
+      }
+      this.disabled = false;
+    },
+  },
+};
 </script>
 
 
@@ -272,6 +269,6 @@ export default {
             padding-top: 37px;
         }
     }
-    
+
 }
 </style>

@@ -9,6 +9,8 @@ import VueApollo from 'vue-apollo';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 
+require('dotenv').config();
+
 Vue.component('v-select', vSelect)
 
 try {
@@ -22,7 +24,7 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 
-const httpLink = new HttpLink({ uri: 'http://0.0.0.0:7000/api' });
+const httpLink = new HttpLink({ uri: process.env.VUE_APP_URL });
 
 const authLink = setContext(({ headers }) => {
   const token = localStorage.getItem('token');

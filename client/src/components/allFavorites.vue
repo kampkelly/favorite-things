@@ -38,11 +38,11 @@ import Swal from 'sweetalert2';
 import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
 
 const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-        confirmButton: 'btn btn-danger',
-        cancelButton: 'btn btn-danger'
-    },
-    buttonsStyling: false,
+  customClass: {
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-danger',
+  },
+  buttonsStyling: false,
 });
 
 const allFavorites = gql`query {
@@ -72,75 +72,75 @@ const deleteFavorite = gql`mutation  ($id: Int!){
 `;
 
 export default {
-    data() {
-        return {
-            getFavoriteThings: []
-        }
+  data() {
+    return {
+      getFavoriteThings: [],
+    };
+  },
+  apollo: {
+    getFavoriteThings: {
+      query: allFavorites,
     },
-    apollo: {
-        getFavoriteThings: {
-            query: allFavorites,
-        },
-    },
-    async created() {
+  },
+  async created() {
+    try {
+      await this.$apollo.queries.getFavoriteThings.refetch();
+    } catch (err) {
+      this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+    }
+  },
+  methods: {
+    async deleteFavorite(id) {
+      const self = this;
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      });
+      if (result.value) {
         try {
-            await this.$apollo.queries.getFavoriteThings.refetch();
-        } catch(err) {
-            this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-        };
+          await self.$apollo.mutate({
+            mutation: deleteFavorite,
+            variables: {
+              id,
+            },
+          });
+          Swal.fire(
+            'Deleted!',
+            'Favorite thing deleted',
+            'success',
+          );
+        } catch (err) {
+          swalWithBootstrapButtons.fire(
+            'Cancelled',
+            'Favorite thing could not be deleted',
+            'error',
+          );
+          return;
+        }
+        try {
+          await self.$apollo.queries.getFavoriteThings.refetch();
+        } catch (err) {
+          this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
+        }
+      }
     },
-    methods: {
-        async deleteFavorite(id) {
-            const self = this;
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            });
-            if (result.value) {
-                try {
-                    await self.$apollo.mutate({
-                        mutation: deleteFavorite,
-                        variables: {
-                            id: id,
-                        },
-                    });
-                    Swal.fire(
-                        'Deleted!',
-                        'Favorite thing deleted',
-                        'success'
-                    );
-                } catch(err) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelled',
-                        'Favorite thing could not be deleted',
-                        'error'
-                    )
-                    return;
-                };
-                try {
-                    await self.$apollo.queries.getFavoriteThings.refetch();
-                } catch(err) {
-                    this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-                };
-            }
-        },
-        showMetadata(metadata) {
-            let html = '';
-            let swalHtml = '';
-            const keys = Object.keys(metadata);
-            for (let i = 0; i < keys.length; i++) {
-                html += `<tr><td>${keys[i]}</td>
+    showMetadata(metadata) {
+      let html = '';
+      let swalHtml = '';
+      const keys = Object.keys(metadata);
+      for (let i = 0; i < keys.length; i++) {
+        html += `<tr><td>${keys[i]}</td>
                     <td>${metadata[keys[i]]}</td></tr>`;
-            }
-            if (!keys.length) {
-                swalHtml = 'no metadata';
-            } else {
-                swalHtml = `
+      }
+      if (!keys.length) {
+        swalHtml = 'no metadata';
+      } else {
+        swalHtml = `
                 <table class="table">
                 <thead class="thead-dark">
                     <tr>
@@ -152,19 +152,19 @@ export default {
                     ${html}
                 </tbody>
                 </table>`;
-            }
-            Swal.fire({
-                title: '<h6>Metadata</h6>',
-                html: swalHtml,
-                focusConfirm: false,
-                confirmButtonText:
+      }
+      Swal.fire({
+        title: '<h6>Metadata</h6>',
+        html: swalHtml,
+        focusConfirm: false,
+        confirmButtonText:
                     'Ok',
-                confirmButtonAriaLabel: 'Thumbs up, great!',
-                showCancelButton: false
-            });
-        }
-    }
-}
+        confirmButtonAriaLabel: 'Thumbs up, great!',
+        showCancelButton: false,
+      });
+    },
+  },
+};
 </script>
 
 

@@ -2,7 +2,7 @@
 
 # installing python
 
-if [ !`which python3` ]; then
+if [ !`which python3.7` ]; then
     echo "...installing python ..."
     { 
 
@@ -20,25 +20,15 @@ else
         echo "python3.7 found."
 fi
 
-echo "Installing virtualenv"
-pip3 install virtualenv
-
 echo "Installing requirements with pip"
 pip3 install -r app/server/requirements.txt
 echo "Python requirements installed"
 
 echo "Installing nodejs"
-# cd ../..
 {
     apt-get install curl --yes
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    nvm install 11.14
-    nvm use 11.14
-    echo "Nodejs installed"
-    npm install npm@latest -g
+    curl -sL https://deb.nodesource.com/setup_11.x | bash
+    apt-get install nodejs --yes
 } || {
     echo "Nodejs installation failed"
 }
@@ -47,7 +37,7 @@ echo "Installing node sass"
 npm rebuild node-sass --force
 echo "Node sass installed"
 
-echo "Install package.json dependencies"
+echo "Installing package.json dependencies"
 cd app/client && npm install
 
 echo "Npm install finished"
