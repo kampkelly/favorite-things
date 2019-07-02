@@ -29,8 +29,8 @@
 // eslint-disable-next-line
 import gql from 'graphql-tag';
 import moment from 'moment';
-import { LOGOUT } from '../mutationTypes';
-import { SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+import { LOGOUT, SET_APP_ERROR_MESSAGE } from '../mutationTypes';
+
 
 const getUserLogs = gql`query {
   getUserLogs {
@@ -42,54 +42,53 @@ const getUserLogs = gql`query {
 `;
 
 export default {
-    data () {
-        return {
-            logs: [],
-            closeLogButton: false
-        }
+  data() {
+    return {
+      logs: [],
+      closeLogButton: false,
+    };
+  },
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
     },
-    computed : {
-      isAuthenticated : function() { 
-        return this.$store.getters.isAuthenticated
+  },
+  apollo: {
+    getUserLogs: {
+      query: getUserLogs,
+      skip() {
+        return this.skipQuery;
+      },
+    },
+  },
+  methods: {
+    async logout(event) {
+      event.preventDefault();
+      await this.$store.dispatch(LOGOUT);
+      this.$router.push('/');
+      this.$router.push('/registration/signin');
+    },
+    async showAuditLogs() {
+      $('.logs-container').animate({ right: '0%' }, 200);
+      this.$apollo.queries.getUserLogs.skip = false;
+      let logs = [];
+      try {
+        logs = await this.$apollo.queries.getUserLogs.refetch();
+        this.logs = logs.data.getUserLogs;
+        this.closeLogButton = true;
+      } catch (err) {
+        this.closeLogButton = true;
+        this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
       }
     },
-    apollo: {
-        getUserLogs: {
-            query: getUserLogs,
-            skip() {
-                return this.skipQuery;
-            },
-        },
+    closeLogsContainer() {
+      $('.logs-container').animate({ right: '-25%' }, 500);
+      this.closeLogButton = false;
     },
-    methods: {
-      async logout(event) {
-        event.preventDefault();
-        await this.$store.dispatch(LOGOUT);
-        this.$router.push('/');
-        this.$router.push('/registration/signin');
-      },
-      async showAuditLogs() {
-          $('.logs-container').animate({ right: "0%" }, 200);
-          this.$apollo.queries.getUserLogs.skip = false;
-          let logs = [];
-          try {
-            logs = await this.$apollo.queries.getUserLogs.refetch();
-            this.logs = logs.data.getUserLogs;
-            console.log(this.logs);
-            this.closeLogButton = true;
-          } catch(err) {
-              this.closeLogButton = true;
-              this.$store.dispatch(SET_APP_ERROR_MESSAGE, err.message.split(':')[1]);
-          }
-      },
-      closeLogsContainer() {
-          $('.logs-container').animate({right: "-25%"}, 500);
-          this.closeLogButton = false;
-      },
-      logDate(log) {
-          return moment(String(log.createdDate)).format('hh:mm a MM/D/YY');
-      }
+    logDate(log) {
+      return moment(String(log.createdDate)).format('hh:mm a MM/D/YY');
     },
+  },
 };
 </script>
 

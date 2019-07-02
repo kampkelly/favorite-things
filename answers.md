@@ -1,0 +1,3 @@
+curl -sL https://deb.nodesource.com/setup_11.x | bash
+apt-get install nodejs --yes
+apt-get install npm --yes

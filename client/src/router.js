@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from './store.js'
+import store from './store.js';
 import Home from './views/Home.vue';
 import Signup from './components/Signup.vue';
 import Signin from './components/Signin.vue';
@@ -20,8 +20,8 @@ const router = new Router({
       path: '/',
       name: 'home',
       component: Home,
-      meta: { 
-        requiresAuth: true
+      meta: {
+        requiresAuth: true,
       },
     },
     {
@@ -42,8 +42,8 @@ const router = new Router({
           component: Signin,
         },
       ],
-      meta: { 
-        requiresNoAuth: true
+      meta: {
+        requiresNoAuth: true,
       },
     },
     {
@@ -64,24 +64,24 @@ const router = new Router({
           component: CategoryFavorites,
         },
       ],
-      meta: { 
-        requiresAuth: true
+      meta: {
+        requiresAuth: true,
       },
     },
     {
       path: '/add-favorite',
       name: 'addFavorite',
       component: AddFavorite,
-      meta: { 
-        requiresAuth: true
+      meta: {
+        requiresAuth: true,
       },
     },
     {
       path: '/favorites/update/:id',
       name: 'updateFavorite',
       component: UpdateFavorite,
-      meta: { 
-        requiresAuth: true
+      meta: {
+        requiresAuth: true,
       },
     },
     {
@@ -96,20 +96,20 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isAuthenticated) {
       next();
-      return
+      return;
     }
-    next('/registration/signin') 
+    next('/registration/signin');
   } else if (to.matched.some(record => record.meta.requiresNoAuth)) {
     if (!store.getters.isAuthenticated) {
       next();
-      return
+      return;
     }
     next('/');
   } else {
-    next() ;
+    next();
   }
 });
 
