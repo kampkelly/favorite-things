@@ -21,7 +21,7 @@ else
 fi
 
 echo "Installing requirements with pip"
-pip3 install -r app/server/requirements.txt
+/usr/bin/python3.7 -m pip install -r app/server/requirements.txt
 echo "Python requirements installed"
 
 echo "Installing nodejs"
@@ -32,10 +32,6 @@ echo "Installing nodejs"
 } || {
     echo "Nodejs installation failed"
 }
-
-echo "Installing node sass"
-npm rebuild node-sass --force
-echo "Node sass installed"
 
 echo "Installing package.json dependencies"
 cd app/client && npm install

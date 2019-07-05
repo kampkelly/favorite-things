@@ -24,6 +24,7 @@ release:
 	@ echo "Starting services"
 	@ docker-compose -f ${RELEASE_COMPOSE_FILE} up -d
 	@ echo "Services started"
+	@ echo "Deployment complete"
 
 start-release:
 	@ echo "Starting release favorite_things..."

@@ -137,7 +137,7 @@ export default {
   methods: {
     validateInputs() {
       this.categorySuccess = '';
-      if (!this.title.length) {
+      if (!this.title.trim().length) {
         this.errors.push('Title cannot be empty');
       }
       if (isNaN(parseInt(this.ranking))) {
@@ -146,7 +146,7 @@ export default {
       if (!this.categoryId) {
         this.errors.push('Category cannot be empty');
       }
-      if (this.description.length && this.description.length < 10) {
+      if (this.description.trim().length && this.description.trim().length < 10) {
         this.errors.push('Description must be up to 10 letters');
       }
       if (this.errors.length) {
@@ -166,8 +166,8 @@ export default {
       const metadatas = $('.metadata-box');
       const metadata = {};
       metadatas.each(function () {
-        const key = $(this).find('.metadata-key').val();
-        const value = $(this).find('.metadata-value').val();
+        const key = $(this).find('.metadata-key').val().trim();
+        const value = $(this).find('.metadata-value').val().trim();
         if (key != '' && value != '') {
           metadata[key] = value;
         }
@@ -182,7 +182,7 @@ export default {
       this.creatingNewCategory = !this.creatingNewCategory;
     },
     async saveNewCategory() {
-      if (!this.newCategoryEntry.length) {
+      if (!this.newCategoryEntry.trim().length) {
         this.categoryError = 'Category name cannot be empty';
         return true;
       }
@@ -191,7 +191,7 @@ export default {
         const data = await this.$apollo.mutate({
           mutation: addCategory,
           variables: {
-            name: this.newCategoryEntry,
+            name: this.newCategoryEntry.trim(),
           },
         });
         const newCategory = data.data.createCategory.category;

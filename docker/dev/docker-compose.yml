@@ -26,7 +26,7 @@ services:
     command: >
       sh -c "cd app/server &&
              alembic upgrade head &&
-             python3 server.py"
+             python3.7 server.py"
   client:
     image: ubuntu_base:dev
     restart: always

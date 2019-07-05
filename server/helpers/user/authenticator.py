@@ -12,7 +12,12 @@ class Authenticator:
     def generate_token(id, name, email):
         """A methid to generate user token."""
         token = jwt.encode(
-            {"id": id, "name": name, "email": email, 'exp': os.getenv('JWT_EXP')},
+            {
+                "id": id,
+                "name": name,
+                "email": email,
+                'exp': os.getenv('JWT_EXP')
+            },
             os.getenv('JWT_SECRET'), algorithm='HS256').decode('utf-8')
         return token
 
@@ -33,12 +38,19 @@ class Authenticator:
     def authenticate(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            user_key, args = Authenticator.get_user_key(os.getenv('APP_SETTINGS'), args)
+            user_key, args = Authenticator.get_user_key(
+                os.getenv('APP_SETTINGS'),
+                args
+            )
             if user_key.split(' ')[0] != 'Bearer':
                 raise GraphQLError('Invalid token supplied')
             try:
                 token = user_key.split(' ')[1]
-                decoded = jwt.decode(token, os.getenv('JWT_SECRET'), algorithms=['HS256'])
+                decoded = jwt.decode(
+                    token,
+                    os.getenv('JWT_SECRET'),
+                    algorithms=['HS256']
+                )
             except jwt.ExpiredSignatureError:
                 raise GraphQLError('Authorization code has expired')
             except jwt.exceptions.DecodeError:
